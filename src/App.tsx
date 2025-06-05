@@ -1,4 +1,4 @@
-import { useState, useEffect, StrictMode } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import Header from './components/layout/Header';
 import HeroSection from './components/HeroSection';
@@ -8,7 +8,6 @@ import MinisteriosSection from './components/MinisteriosSection';
 import GaleriaSection from './components/GaleriaSection';
 import ContatoSection from './components/ContatoSection';
 import Footer from './components/layout/Footer';
-import { createRoot } from 'react-dom/client';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -56,8 +55,3 @@ function App() {
 }
 
 export default App;
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-)
