@@ -1,3 +1,4 @@
+import PastoresList from './components/PastoresList';
 import { useState, useEffect } from 'react';
 import './App.css';
 import Header from './components/layout/Header';
@@ -44,7 +45,7 @@ function App() {
       <main>
         <HeroSection />
         <HistoriaSection />
-        <PastoresSection />
+        <PastoresList />
         <MinisteriosSection />
         <GaleriaSection />
         <ContatoSection />
