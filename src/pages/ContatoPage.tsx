@@ -1,4 +1,3 @@
-'''
 import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient.js';
 import { Mail, Phone, MapPin, Loader, AlertCircle } from 'lucide-react';
@@ -204,4 +203,3 @@ const ContatoPage: React.FC = () => {
  * - Busca dinâmica de informações de contato do Sanity
  */
 export default ContatoPage;
-'''
