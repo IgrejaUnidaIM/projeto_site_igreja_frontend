@@ -16,6 +16,6 @@
 - [X] Validar funcionamento de todas as páginas criadas
 - [X] Corrigir problemas de deploy na Vercel (permissões de execução)
 - [X] Atualizar script de build para usar npx
-- [ ] Empacotar e enviar versão final do projeto ao usuário
+- [X] Empacotar e enviar versão final do projeto ao usuário
 - [ ] Melhorar tipagem TypeScript do projeto (tarefa futura)
 

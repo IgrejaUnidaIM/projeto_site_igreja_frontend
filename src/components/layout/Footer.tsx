@@ -1,11 +1,13 @@
 import { Heart } from 'lucide-react';
+import { Link } from 'react-router-dom'; // Importar Link
 import logo from '../../assets/images/logo.png';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-blue-900 dark:bg-slate-900 text-white pt-16 pb-8">
+    // Alterar a cor de fundo para um azul mais escuro (ex: bg-blue-950)
+    <footer className="bg-blue-950 dark:bg-slate-900 text-white pt-16 pb-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Logo e Informações */}
@@ -23,18 +25,18 @@ const Footer = () => {
             </p>
           </div>
           
-          {/* Links Rápidos */}
+          {/* Links Rápidos - Usar Link do React Router */}
           <div>
             <h4 className="text-lg font-bold mb-4 border-b border-blue-700 dark:border-blue-800 pb-2">
               Links Rápidos
             </h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Início</a></li>
-              <li><a href="#historia" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Nossa História</a></li>
-              <li><a href="#pastores" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Pastores</a></li>
-              <li><a href="#ministerios" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Ministérios</a></li>
-              <li><a href="#galeria" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Galeria</a></li>
-              <li><a href="#contato" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Contato</a></li>
+              <li><Link to="/" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Início</Link></li>
+              <li><Link to="/historia" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Nossa História</Link></li>
+              <li><Link to="/pastores" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Pastores</Link></li>
+              <li><Link to="/ministerios" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Ministérios</Link></li>
+              <li><Link to="/galeria" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Galeria</Link></li>
+              <li><Link to="/contato" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Contato</Link></li>
             </ul>
           </div>
           
@@ -84,7 +86,7 @@ const Footer = () => {
               </p>
             </address>
             
-            {/* Redes Sociais */}
+            {/* Redes Sociais (Manter como está ou atualizar para links reais) */}
             <div className="mt-4 flex space-x-3">
               <a href="#" className="w-8 h-8 rounded-full bg-blue-800 dark:bg-blue-950 flex items-center justify-center text-white hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
