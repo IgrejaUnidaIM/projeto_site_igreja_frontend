@@ -9,12 +9,18 @@ import logo from '../../assets/images/logo.png'; // Importa o logo
 interface ConfiguracoesGerais {
   endereco?: string;
   cep?: string;
-  telefone?: string;
-  email?: string;
+  telefonePrincipal?: string; // Ajustado para corresponder ao nome provável no Sanity
+  emailContato?: string;    // Ajustado para corresponder ao nome provável no Sanity
   facebookUrl?: string;
   instagramUrl?: string;
   youtubeUrl?: string;
-  // Adicione outros campos se houver (ex: horariosCulto)
+  linkGoogleMaps?: string; // Adicionado para o link do Google Maps
+  horariosCulto?: Array<{ // Adicionado para buscar horários dinamicamente
+    dia?: string;
+    horario?: string;
+    descricao?: string;
+    _key?: string; // Sanity usa _key para itens em arrays
+  }>;
 }
 
 // Componente Footer: Rodapé principal do site
@@ -32,11 +38,18 @@ const Footer: React.FC = () => {
     const query = `*[_type == "configuracoesGerais"][0] {
       endereco,
       cep,
-      telefone,
-      email,
+      telefonePrincipal, // Ajustado para buscar o campo correto
+      emailContato,       // Ajustado para buscar o campo correto
       facebookUrl,
       instagramUrl,
-      youtubeUrl
+      youtubeUrl,
+      linkGoogleMaps, // Adicionado para buscar o link do Google Maps
+      horariosCulto[]{ // Busca o array de horários de culto
+        dia,
+        horario,
+        descricao,
+        _key // Inclui a chave única para mapeamento
+      }
       // Adicione outros campos aqui
     }`;
 
@@ -57,7 +70,8 @@ const Footer: React.FC = () => {
       });
   }, []);
 
-  // TODO: Considerar buscar horários de culto do Sanity também
+  // Remove a constante hardcoded, pois os dados virão do Sanity
+  /*
   const horariosCulto = [
     { dia: "Domingo", horario: "08h30", descricao: "Escola Bíblica Dominical" },
     { dia: "Domingo", horario: "18h00", descricao: "Culto da Família" },
@@ -65,10 +79,11 @@ const Footer: React.FC = () => {
     { dia: "Domingo", horario: "09h00", descricao: "Santa Ceia" }, // Verificar se é todo domingo
     { dia: "Segunda-feira", horario: "08h00", descricao: "Círculo de Oração" },
   ];
+  */
 
   return (
-    // Rodapé com cor de fundo azul escura
-    <footer className="bg-blue-950 dark:bg-slate-900 text-white pt-16 pb-8" role="contentinfo">
+    // Rodapé com cor de fundo azul escura e padding reduzido
+    <footer className="bg-blue-950 dark:bg-slate-900 text-white pt-12 pb-6" role="contentinfo">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Coluna 1: Logo e Informações */}
@@ -107,35 +122,53 @@ const Footer: React.FC = () => {
             <h4 id="footer-horarios" className="text-lg font-bold mb-4 border-b border-blue-700 dark:border-blue-800 pb-2">
               Horários de Culto
             </h4>
-            <ul className="space-y-2 text-sm">
-              {horariosCulto.map((item, index) => (
-                <li key={index} className="flex flex-col">
-                  <span className="font-medium">{item.dia} - {item.horario}</span>
-                  <span className="text-blue-200 dark:text-blue-300">{item.descricao}</span>
-                </li>
-              ))}
-            </ul>
+            {loading && <p className="text-sm text-blue-200">Carregando horários...</p>}
+            {!loading && config?.horariosCulto && config.horariosCulto.length > 0 && (
+              <ul className="space-y-2 text-sm">
+                {config.horariosCulto.map((item) => (
+                  <li key={item._key} className="flex flex-col">
+                    <span className="font-medium">{item.dia} - {item.horario}</span>
+                    <span className="text-blue-200 dark:text-blue-300">{item.descricao}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {!loading && (!config?.horariosCulto || config.horariosCulto.length === 0) && (
+              <p className="text-sm text-blue-200">Horários não disponíveis.</p>
+            )}
           </section>
           
-          {/* Coluna 4: Contato (Dinâmico do Sanity) */}
-          <section aria-labelledby="footer-contato">
-            <h4 id="footer-contato" className="text-lg font-bold mb-4 border-b border-blue-700 dark:border-blue-800 pb-2">
-              Contato
+          {/* Coluna 4: Endereço e Contato (Dinâmico do Sanity) */}
+          <section aria-labelledby="footer-endereco">
+            <h4 id="footer-endereco" className="text-lg font-bold mb-4 border-b border-blue-700 dark:border-blue-800 pb-2">
+              Endereço e Contato
             </h4>
             {loading && <p className="text-sm text-blue-200">Carregando contato...</p>}
             {!loading && config && (
               <address className="not-italic text-sm space-y-2">
                 {config.endereco && <p>{config.endereco}</p>}
-                {/* <p>Conj. Hab. Inacio Monteiro, São Paulo - SP</p> */}
-                {config.cep && <p>Cep: {config.cep}</p>}
-                {config.telefone && (
-                  <p className="pt-2">
-                    <span className="font-medium">Telefone:</span> {config.telefone}
+                {/* Adiciona o link do Google Maps se existir */}
+                {config.linkGoogleMaps && (
+                  <p>
+                    <a 
+                      href={config.linkGoogleMaps} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-300 hover:text-white underline transition-colors"
+                    >
+                      Ver no Google Maps
+                    </a>
                   </p>
                 )}
-                {config.email && (
+                {config.cep && <p>Cep: {config.cep}</p>}
+                {config.telefonePrincipal && (
+                  <p className="pt-2">
+                    <span className="font-medium">Telefone:</span> {config.telefonePrincipal}
+                  </p>
+                )}
+                {config.emailContato && (
                   <p>
-                    <span className="font-medium">Email:</span> {config.email}
+                    <span className="font-medium">Email:</span> {config.emailContato}
                   </p>
                 )}
               </address>

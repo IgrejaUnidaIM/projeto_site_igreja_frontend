@@ -9,8 +9,8 @@ import { Mail, Phone, MapPin, Loader, AlertCircle } from 'lucide-react';
 interface ContatoInfo {
   endereco?: string;
   cep?: string;
-  telefone?: string;
-  email?: string;
+  telefonePrincipal?: string; // Ajustado para corresponder ao nome provável no Sanity
+  emailContato?: string;    // Ajustado para corresponder ao nome provável no Sanity
   // Outros campos podem ser adicionados conforme necessidade (ex: link do mapa, horários de funcionamento)
 }
 
@@ -23,14 +23,14 @@ const ContatoPage: React.FC = () => {
     /**
      * Query para buscar as informações de contato do Sanity
      * - Busca do documento singleton 'configuracoesGerais'
-     * - Recupera endereço, CEP, telefone e email
+     * - Recupera endereço, CEP, telefonePrincipal e emailContato
      * - Ajuste o nome do schema conforme configurado no seu Sanity
      */
     const query = `*[_type == "configuracoesGerais"][0] {
       endereco,
       cep,
-      telefone,
-      email
+      telefonePrincipal, // Ajustado para buscar o campo correto
+      emailContato       // Ajustado para buscar o campo correto
       // Outros campos podem ser adicionados aqui conforme necessidade
     }`;
 
@@ -40,7 +40,10 @@ const ContatoPage: React.FC = () => {
 
     sanityClient.fetch<ContatoInfo>(query)
       .then((data) => {
-        console.log('ContatoPage: Dados de contato recebidos:', data);
+        console.log("ContatoPage: Dados de contato recebidos:", data);
+        // Log específico para telefone e email
+        console.log("ContatoPage: Telefone recebido:", data?.telefone);
+        console.log("ContatoPage: Email recebido:", data?.email);
         setContatoInfo(data);
         setLoading(false);
       })
@@ -101,14 +104,14 @@ const ContatoPage: React.FC = () => {
                 <Phone size={20} className="mr-3 text-blue-500 flex-shrink-0" aria-hidden="true" />
                 <div>
                   <p className="font-medium">Telefone:</p>
-                  <p>{contatoInfo.telefone || 'Não informado'}</p>
+                  <p>{contatoInfo.telefonePrincipal || 'Não informado'}</p> {/* Ajustado para usar telefonePrincipal */}
                 </div>
               </div>
               <div className="flex items-center">
                 <Mail size={20} className="mr-3 text-blue-500 flex-shrink-0" aria-hidden="true" />
                 <div>
                   <p className="font-medium">Email:</p>
-                  <p>{contatoInfo.email || 'Não informado'}</p>
+                  <p>{contatoInfo.emailContato || 'Não informado'}</p> {/* Ajustado para usar emailContato */}
                 </div>
               </div>
             </div>
@@ -130,10 +133,20 @@ const ContatoPage: React.FC = () => {
           {/* </div> */}
         </div>
 
-        {/* Formulário de Contato */}
+        {/* Formulário de Contato - Integrado com Formspree */}
         <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Envie sua Mensagem</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {/* 
+            INSTRUÇÃO PARA O USUÁRIO:
+            1. Crie uma conta gratuita em https://formspree.io/
+            2. Crie um novo formulário no Formspree e copie o "endpoint URL" fornecido.
+            3. Substitua a URL "#COLOQUE_SUA_URL_FORMSPREE_AQUI" abaixo pela sua URL real do Formspree.
+          */}
+          <form 
+            action="https://formspree.io/f/mvgrzbpw" 
+            method="POST" 
+            className="space-y-4"
+          >
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome</label>
               <input 

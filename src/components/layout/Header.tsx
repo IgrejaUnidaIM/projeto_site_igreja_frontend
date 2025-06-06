@@ -69,10 +69,10 @@ const Header = () => {
       role="banner" // Adiciona role para acessibilidade
     >
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo e Nome da Igreja */}
+        {/* Logo e Nome da Igreja - Centralizado */}
         <div className="flex items-center">
           <Link to="/" className="flex items-center" aria-label="Página Inicial">
-            <div className="relative w-16 h-16 overflow-hidden">
+            <div className="relative w-12 h-12 md:w-16 md:h-16 overflow-hidden flex-shrink-0"> {/* Ajusta tamanho e evita encolher */}
               <img 
                 src={logo} 
                 alt="Logotipo da 1ª Igreja Unida de Inácio Monteiro" // Alt text mais descritivo
@@ -80,12 +80,12 @@ const Header = () => {
               />
             </div>
             <div className="ml-3">
-              <h1 className="text-lg md:text-xl font-bold text-blue-800 dark:text-blue-400">
-                1ª Igreja Unida
+              <h1 className="text-base md:text-xl font-bold text-blue-800 dark:text-blue-400 whitespace-nowrap"> {/* Ajusta tamanho e evita quebra de linha */}
+                1ª Igreja Unida em Inácio Monteiro
               </h1>
-              <p className="text-xs md:text-sm text-blue-600 dark:text-blue-300">
+              {/* <p className="text-xs md:text-sm text-blue-600 dark:text-blue-300">
                 de Inácio Monteiro
-              </p>
+              </p> */}
             </div>
           </Link>
         </div>
@@ -99,10 +99,10 @@ const Header = () => {
           ))}
           {/* Link para Área de Membros (Login) */}
           <Link to="/area-de-membros" className="btn-primary">Área de Membros</Link> 
-          {/* Botão para alternar modo claro/escuro */}
+          {/* Botão para alternar modo claro/escuro - Estilo ajustado para visibilidade */}
           <button 
             onClick={toggleDarkMode} 
-            className="p-2 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
+            className="p-2 rounded-full border border-gray-300 dark:border-slate-700 bg-gray-50 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 transition-colors"
             aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"} // aria-label já estava bom
             title={darkMode ? "Ativar modo claro" : "Ativar modo escuro"} // Adiciona title para tooltip
           >

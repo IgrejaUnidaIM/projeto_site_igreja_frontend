@@ -1,23 +1,19 @@
 
 import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient.js';
-import { Image as ImageIcon, AlertCircle, Loader } from 'lucide-react';
+import { Image as ImageIcon, Video as VideoIcon, AlertCircle, Loader } from 'lucide-react';
 
 /**
  * Interface para os itens da galeria vindos do Sanity
- * Cada item pode ter título, descrição e imagem
+ * Cada item pode ser uma imagem ou um vídeo.
  */
 interface GaleriaItem {
   _id: string;
   titulo?: string;
   descricao?: string;
-  imagem?: {
-    asset?: {
-      _ref?: string;
-      url?: string; // URL da imagem que será buscada do Sanity
-    };
-  };
-  // Outros campos podem ser adicionados conforme necessidade
+  tipoMidia?: 'imagem' | 'video'; // Campo para diferenciar imagem de vídeo
+  imagemUrl?: string; // URL da imagem
+  videoUrl?: string; // URL do vídeo (ex: YouTube, Vimeo, ou upload direto)
 }
 
 const GaleriaPage: React.FC = () => {
@@ -29,26 +25,26 @@ const GaleriaPage: React.FC = () => {
     /**
      * Query para buscar itens da galeria do Sanity
      * - Ordenados por data de criação (mais recentes primeiro)
-     * - Busca ID, título, descrição e URL da imagem
-     * - Ajuste o nome do schema ('galeriaItem') conforme configurado no seu Sanity
+     * - Busca ID, título, descrição, tipo de mídia, URL da imagem e URL do vídeo
+     * - Ajuste os nomes dos campos (tipoMidia, videoUrl) conforme configurado no seu Sanity
      */
     const query = `*[_type == "galeriaItem"] | order(_createdAt desc) {
       _id,
       titulo,
       descricao,
-      "imagemUrl": imagem.asset->url
+      tipoMidia, // Campo para identificar o tipo
+      "imagemUrl": imagem.asset->url, // Busca URL da imagem se for imagem
+      videoUrl // Busca URL do vídeo se for vídeo (ajuste o nome do campo)
     }`;
 
     console.log('GaleriaPage: Iniciando busca de dados...');
     setLoading(true);
     setError(null);
 
-    sanityClient.fetch(query)
-      .then((data: GaleriaItem[]) => {
+    sanityClient.fetch<GaleriaItem[]>(query)
+      .then((data) => {
         console.log('GaleriaPage: Dados recebidos do Sanity:', data);
-        // Mapeia os dados para incluir a URL da imagem diretamente no objeto
-        const mappedData = data.map(item => ({ ...item, imagem: { asset: { url: (item as any).imagemUrl } } }));
-        setItens(mappedData || []);
+        setItens(data || []);
         setLoading(false);
       })
       .catch((err) => {
@@ -57,6 +53,13 @@ const GaleriaPage: React.FC = () => {
         setLoading(false);
       });
   }, []);
+
+  // Função auxiliar para extrair ID de vídeo do YouTube
+  const getYouTubeId = (url: string): string | null => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
 
   return (
     <div className="container mx-auto px-4 py-16 min-h-screen">
@@ -96,38 +99,65 @@ const GaleriaPage: React.FC = () => {
         </div>
       )}
 
-      {/* Grid de imagens da galeria */}
+      {/* Grid de itens da galeria (imagens e vídeos) */}
       {!loading && !error && itens.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {itens.map((item) => (
-            <div 
-              key={item._id} 
-              className="group relative bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md aspect-square"
-              tabIndex={0}
-              role="img"
-              aria-label={item.titulo || 'Item da Galeria'}
-            >
-              {item.imagem?.asset?.url ? (
-                <img 
-                  src={item.imagem.asset.url} 
-                  alt={item.titulo || 'Item da Galeria'} 
-                  className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105 group-focus:scale-105"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
-                  <ImageIcon size={48} aria-hidden="true" />
-                </div>
-              )}
-              {/* Overlay com título/descrição ao passar o mouse ou focar */}
-              {(item.titulo || item.descricao) && (
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-70 group-focus:bg-opacity-70 transition-opacity duration-300 flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 group-focus:opacity-100">
-                  {item.titulo && <h3 className="text-white font-bold text-lg mb-1 truncate">{item.titulo}</h3>}
-                  {item.descricao && <p className="text-gray-200 text-sm line-clamp-2">{item.descricao}</p>}
-                </div>
-              )}
-            </div>
-          ))}
+          {itens.map((item) => {
+            const isVideo = item.tipoMidia === 'video' && item.videoUrl;
+            const isImage = item.tipoMidia === 'imagem' && item.imagemUrl;
+            const youtubeId = isVideo ? getYouTubeId(item.videoUrl || '') : null;
+
+            return (
+              <div 
+                key={item._id} 
+                className="group relative bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md aspect-video" // Ajustado para aspect-video
+                tabIndex={0}
+                role="figure"
+                aria-label={item.titulo || (isVideo ? 'Vídeo da Galeria' : 'Imagem da Galeria')}
+              >
+                {isImage && (
+                  <img 
+                    src={item.imagemUrl} 
+                    alt={item.titulo || 'Imagem da Galeria'} 
+                    className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105 group-focus:scale-105"
+                    loading="lazy"
+                  />
+                )}
+                {isVideo && youtubeId && (
+                  <iframe
+                    className="w-full h-full"
+                    src={`https://www.youtube.com/embed/${youtubeId}`}
+                    title={item.titulo || "Vídeo do YouTube"}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                )}
+                {isVideo && !youtubeId && item.videoUrl && ( // Para vídeos diretos (não YouTube)
+                  <video 
+                    controls 
+                    className="w-full h-full object-cover"
+                    preload="metadata"
+                  >
+                    <source src={item.videoUrl} type="video/mp4" />
+                    Seu navegador não suporta o elemento de vídeo.
+                  </video>
+                )}
+                {!isImage && !isVideo && ( // Placeholder se não for nem imagem nem vídeo válido
+                  <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
+                    {item.tipoMidia === 'video' ? <VideoIcon size={48} aria-hidden="true" /> : <ImageIcon size={48} aria-hidden="true" />}
+                  </div>
+                )}
+                {/* Overlay com título/descrição */}
+                {(item.titulo || item.descricao) && (
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent p-4 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300">
+                    {item.titulo && <h3 className="text-white font-bold text-lg mb-1 truncate">{item.titulo}</h3>}
+                    {item.descricao && <p className="text-gray-200 text-sm line-clamp-2">{item.descricao}</p>}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
@@ -136,12 +166,12 @@ const GaleriaPage: React.FC = () => {
 
 /**
  * Exporta o componente GaleriaPage
- * Esta página exibe uma galeria de imagens dinâmica, buscando dados do Sanity
+ * Esta página exibe uma galeria dinâmica de imagens e vídeos, buscando dados do Sanity
  * Recursos implementados:
- * - Grid responsivo (1 coluna em mobile, até 4 colunas em desktop)
- * - Acessibilidade (navegação por teclado, textos alternativos)
+ * - Suporte a imagens e vídeos (YouTube embed ou vídeo direto)
+ * - Grid responsivo
+ * - Acessibilidade
  * - Estados de carregamento, erro e galeria vazia
- * - Efeito de hover/focus para mostrar detalhes das imagens
+ * - Efeito de hover/focus para mostrar detalhes
  */
 export default GaleriaPage;
-
