@@ -16,7 +16,7 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen"> 
       <Header /> 
-      <main className="flex-grow pt-20"> {/* Adiciona padding top para compensar o header fixo */} 
+      <main className="flex-grow pt-24"> {/* Aumenta padding top para compensar o header fixo */} 
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/historia" element={<HistoriaPage />} />

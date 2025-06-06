@@ -457,6 +457,26 @@
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
+"@portabletext/react@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@portabletext/react/-/react-3.2.1.tgz#9fc19c9bfef3b2c2e6b71628e7879d1f343446cf"
+  integrity sha512-RyFLk6u2q6ZyABTdOk+xoNR2Tq/4fcQFEWayNk4Kbd3gHpUUTabqOrDMChcmG6C7YVLSpwIEBwHoBVcy4vK/hA==
+  dependencies:
+    "@portabletext/toolkit" "^2.0.17"
+    "@portabletext/types" "^2.0.13"
+
+"@portabletext/toolkit@^2.0.17":
+  version "2.0.17"
+  resolved "https://registry.yarnpkg.com/@portabletext/toolkit/-/toolkit-2.0.17.tgz#a09bb1985dc27949f34a2a5c6817b55dadbcaa9f"
+  integrity sha512-5wj+oUaCmHm9Ay1cytPmT1Yc0SrR1twwUIc0qNQ3MtaXaNMPw99Gjt1NcA34yfyKmEf/TAB2NiiT72jFxdddIQ==
+  dependencies:
+    "@portabletext/types" "^2.0.13"
+
+"@portabletext/types@^2.0.13":
+  version "2.0.13"
+  resolved "https://registry.yarnpkg.com/@portabletext/types/-/types-2.0.13.tgz#7a4bf6dac30713fbe1b4bc01dc572af0af72955d"
+  integrity sha512-5xk5MSyQU9CrDho3Rsguj38jhijhD36Mk8S6mZo3huv6PM+t4M/5kJN2KFIxgvt4ONpvOEs1pVIZAV0cL0Vi+Q==
+
 "@remix-run/router@1.23.0":
   version "1.23.0"
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.23.0.tgz#35390d0e7779626c026b11376da6789eb8389242"

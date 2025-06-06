@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient.js';
+import { PortableText } from '@portabletext/react'; // Importa o componente PortableText
 import { Calendar, MapPin, Image as ImageIcon, Loader, AlertCircle } from 'lucide-react';
 
 /**
@@ -11,7 +12,7 @@ interface Evento {
   _id: string;           // ID único do Sanity
   titulo?: string;       // Título do evento
   data?: string;         // Data do evento (formato string, ex: YYYY-MM-DD ou ISO)
-  descricao?: string;    // Descrição detalhada do evento
+  descricao?: any[];     // Descrição detalhada (Portable Text - array de blocos)
   local?: string;        // Local onde o evento será realizado
   imagemUrl?: string;    // URL da imagem do evento
 }
@@ -160,10 +161,14 @@ const EventosPage: React.FC = () => {
                     <span>{evento.local}</span>
                   </div>
                 )}
-                {/* Descrição do Evento */}
-                <p className="text-gray-700 dark:text-gray-300 text-sm mb-4 flex-grow">
-                  {evento.descricao || 'Descrição não disponível.'}
-                </p>
+                {/* Descrição do Evento (usando PortableText) */}
+                <div className="text-gray-700 dark:text-gray-300 text-sm mb-4 flex-grow prose prose-sm dark:prose-invert max-w-none">
+                  {evento.descricao ? (
+                    <PortableText value={evento.descricao} />
+                  ) : (
+                    <p>Descrição não disponível.</p>
+                  )}
+                </div>
                 {/* TODO: Adicionar botão de "Saiba Mais" ou link se necessário */}
                 {/* Exemplo: */}
                 {/* <Link 
