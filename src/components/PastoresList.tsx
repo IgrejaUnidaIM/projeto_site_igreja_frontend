@@ -28,7 +28,7 @@ const PastoresList: React.FC = () => {
       nome,
       tipo,
       bio,
-      "imagemUrl": foto.asset->url // Busca a URL da imagem referenciada
+      "imagemUrl": imagem.asset->url // Busca a URL da imagem referenciada
     }`;
 
     // Executa a busca no Sanity
