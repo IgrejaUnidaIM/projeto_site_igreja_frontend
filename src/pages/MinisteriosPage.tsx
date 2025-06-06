@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient.js';
 import { Link } from 'react-router-dom';
 
-// Define a interface para os dados dos ministérios
+/**
+ * Interface para os dados dos ministérios buscados do Sanity
+ * Contém informações como nome, descrição, líder e imagem
+ */
 interface Ministerio {
-  _id: string;
-  nome: string;
-  descricao?: string;
-  lider?: string; // Assumindo que você tenha um campo 'lider' no schema
-  imagemUrl?: string; // Assumindo um campo de imagem
+  _id: string;           // ID único do Sanity
+  nome: string;          // Nome do ministério
+  descricao?: string;    // Descrição do ministério e suas atividades
+  lider?: string;        // Nome do líder do ministério
+  imagemUrl?: string;    // URL da imagem representativa do ministério
 }
 
 const MinisteriosPage: React.FC = () => {
@@ -19,15 +22,21 @@ const MinisteriosPage: React.FC = () => {
 
   console.log('MinisteriosPage: Renderizando componente...');
 
-  // Busca os dados dos ministérios do Sanity
+  /**
+   * Efeito para buscar os dados dos ministérios do Sanity quando o componente montar
+   */
   useEffect(() => {
     console.log('MinisteriosPage: Iniciando busca de dados no Sanity...');
     setLoading(true); // Garante que loading seja true no início da busca
     setError(null); // Limpa erros anteriores
     setMinisterios(null); // Limpa dados anteriores
 
-    // Ajuste a query conforme os campos exatos do seu schema 'ministerio'
-    // Verifique se o campo de imagem se chama 'imagem' ou outro nome
+    /**
+     * Query GROQ para buscar todos os ministérios
+     * - Ordenados por nome (ordem alfabética)
+     * - Busca ID, nome, descrição, líder e URL da imagem
+     * - Ajuste o nome do schema ('ministerio') conforme configurado no seu Sanity
+     */
     const query = `*[_type == "ministerio"] | order(nome asc) {
       _id,
       nome,
@@ -130,5 +139,15 @@ const MinisteriosPage: React.FC = () => {
   );
 };
 
+/**
+ * Exporta o componente MinisteriosPage
+ * Esta página exibe uma lista de ministérios da igreja, buscando dados do Sanity
+ * Recursos implementados:
+ * - Grid responsivo (1 coluna em mobile, até 3 colunas em desktop)
+ * - Estados de carregamento, erro e lista vazia
+ * - Cards com imagem, nome, líder e descrição de cada ministério
+ * - Acessibilidade (alt text para imagens)
+ * - Tratamento para imagens ausentes
+ */
 export default MinisteriosPage;
 

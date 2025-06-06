@@ -1,21 +1,82 @@
-import { Heart } from 'lucide-react';
-import { Link } from 'react-router-dom'; // Importar Link
-import logo from '../../assets/images/logo.png';
 
-const Footer = () => {
-  const currentYear = new Date().getFullYear();
+import React, { useState, useEffect } from 'react'; // Importa hooks do React
+import { Link } from 'react-router-dom'; // Importa Link para navegação interna
+import { Heart, Facebook, Instagram, Youtube } from 'lucide-react'; // Importa ícones
+import sanityClient from '../../sanityClient.js'; // Importa o cliente Sanity (ajuste o caminho se necessário)
+import logo from '../../assets/images/logo.png'; // Importa o logo
+
+// Interface para os dados de configuração buscados do Sanity
+interface ConfiguracoesGerais {
+  endereco?: string;
+  cep?: string;
+  telefone?: string;
+  email?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  youtubeUrl?: string;
+  // Adicione outros campos se houver (ex: horariosCulto)
+}
+
+// Componente Footer: Rodapé principal do site
+const Footer: React.FC = () => {
+  const currentYear = new Date().getFullYear(); // Obtém o ano atual
+  const [config, setConfig] = useState<ConfiguracoesGerais | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  // Não vamos exibir erro no rodapé, apenas logar no console
+  // const [error, setError] = useState<string | null>(null);
+
+  // Efeito para buscar as configurações gerais do Sanity
+  useEffect(() => {
+    // Query para buscar as configurações gerais
+    // Assumindo um tipo de documento singleton chamado 'configuracoesGerais'
+    const query = `*[_type == "configuracoesGerais"][0] {
+      endereco,
+      cep,
+      telefone,
+      email,
+      facebookUrl,
+      instagramUrl,
+      youtubeUrl
+      // Adicione outros campos aqui
+    }`;
+
+    console.log('Footer: Iniciando busca de configurações gerais...');
+    setLoading(true);
+    // setError(null);
+
+    sanityClient.fetch<ConfiguracoesGerais>(query)
+      .then((data) => {
+        console.log('Footer: Configurações recebidas:', data);
+        setConfig(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Footer: Erro ao buscar configurações gerais:', err);
+        // setError('Falha ao carregar informações.'); // Não mostra erro no rodapé
+        setLoading(false);
+      });
+  }, []);
+
+  // TODO: Considerar buscar horários de culto do Sanity também
+  const horariosCulto = [
+    { dia: "Domingo", horario: "08h30", descricao: "Escola Bíblica Dominical" },
+    { dia: "Domingo", horario: "18h00", descricao: "Culto da Família" },
+    { dia: "Quinta-feira", horario: "20h00", descricao: "Culto de Oração" },
+    { dia: "Domingo", horario: "09h00", descricao: "Santa Ceia" }, // Verificar se é todo domingo
+    { dia: "Segunda-feira", horario: "08h00", descricao: "Círculo de Oração" },
+  ];
 
   return (
-    // Alterar a cor de fundo para um azul mais escuro (ex: bg-blue-950)
-    <footer className="bg-blue-950 dark:bg-slate-900 text-white pt-16 pb-8">
+    // Rodapé com cor de fundo azul escura
+    <footer className="bg-blue-950 dark:bg-slate-900 text-white pt-16 pb-8" role="contentinfo">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {/* Logo e Informações */}
+          {/* Coluna 1: Logo e Informações */}
           <div className="flex flex-col items-center md:items-start">
             <div className="w-24 h-24 mb-4">
               <img 
                 src={logo} 
-                alt="Igreja Unida de Inácio Monteiro" 
+                alt="Logotipo da 1ª Igreja Unida de Inácio Monteiro" // Alt text descritivo
                 className="w-full h-full object-contain"
               />
             </div>
@@ -25,12 +86,13 @@ const Footer = () => {
             </p>
           </div>
           
-          {/* Links Rápidos - Usar Link do React Router */}
-          <div>
-            <h4 className="text-lg font-bold mb-4 border-b border-blue-700 dark:border-blue-800 pb-2">
+          {/* Coluna 2: Links Rápidos */}
+          <nav aria-labelledby="footer-links-rapidos">
+            <h4 id="footer-links-rapidos" className="text-lg font-bold mb-4 border-b border-blue-700 dark:border-blue-800 pb-2">
               Links Rápidos
             </h4>
             <ul className="space-y-2">
+              {/* Links internos usando React Router */}
               <li><Link to="/" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Início</Link></li>
               <li><Link to="/historia" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Nossa História</Link></li>
               <li><Link to="/pastores" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Pastores</Link></li>
@@ -38,76 +100,95 @@ const Footer = () => {
               <li><Link to="/galeria" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Galeria</Link></li>
               <li><Link to="/contato" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Contato</Link></li>
             </ul>
-          </div>
+          </nav>
           
-          {/* Horários */}
-          <div>
-            <h4 className="text-lg font-bold mb-4 border-b border-blue-700 dark:border-blue-800 pb-2">
+          {/* Coluna 3: Horários (TODO: Tornar dinâmico?) */}
+          <section aria-labelledby="footer-horarios">
+            <h4 id="footer-horarios" className="text-lg font-bold mb-4 border-b border-blue-700 dark:border-blue-800 pb-2">
               Horários de Culto
             </h4>
             <ul className="space-y-2 text-sm">
-              <li className="flex flex-col">
-                <span className="font-medium">Domingo - 08h30</span>
-                <span className="text-blue-200 dark:text-blue-300">Escola Bíblica Dominical</span>
-              </li>
-              <li className="flex flex-col">
-                <span className="font-medium">Domingo - 18h00</span>
-                <span className="text-blue-200 dark:text-blue-300">Culto da Família</span>
-              </li>
-              <li className="flex flex-col">
-                <span className="font-medium">Quinta-feira - 20h00</span>
-                <span className="text-blue-200 dark:text-blue-300">Culto de Oração</span>
-              </li>
-              <li className="flex flex-col">
-                <span className="font-medium">Domingo - 09h00</span>
-                <span className="text-blue-200 dark:text-blue-300">Santa Ceia</span>
-              </li>
-              <li className="flex flex-col">
-                <span className="font-medium">Segunda-feira - 08h00</span>
-                <span className="text-blue-200 dark:text-blue-300">Círculo de Oração</span>
-              </li>
+              {horariosCulto.map((item, index) => (
+                <li key={index} className="flex flex-col">
+                  <span className="font-medium">{item.dia} - {item.horario}</span>
+                  <span className="text-blue-200 dark:text-blue-300">{item.descricao}</span>
+                </li>
+              ))}
             </ul>
-          </div>
+          </section>
           
-          {/* Contato */}
-          <div>
-            <h4 className="text-lg font-bold mb-4 border-b border-blue-700 dark:border-blue-800 pb-2">
+          {/* Coluna 4: Contato (Dinâmico do Sanity) */}
+          <section aria-labelledby="footer-contato">
+            <h4 id="footer-contato" className="text-lg font-bold mb-4 border-b border-blue-700 dark:border-blue-800 pb-2">
               Contato
             </h4>
-            <address className="not-italic text-sm space-y-2">
-              <p>R. Cachoeira Jaciquara, 175</p>
-              <p>Conj. Hab. Inacio Monteiro, São Paulo - SP</p>
-              <p>Cep: 08472-420</p>
-              <p className="pt-2">
-                <span className="font-medium">Telefone:</span> (11) 99001-0033
-              </p>
-              <p>
-                <span className="font-medium">Email:</span> unidainaciomonteiro@gmail.com
-              </p>
-            </address>
+            {loading && <p className="text-sm text-blue-200">Carregando contato...</p>}
+            {!loading && config && (
+              <address className="not-italic text-sm space-y-2">
+                {config.endereco && <p>{config.endereco}</p>}
+                {/* <p>Conj. Hab. Inacio Monteiro, São Paulo - SP</p> */}
+                {config.cep && <p>Cep: {config.cep}</p>}
+                {config.telefone && (
+                  <p className="pt-2">
+                    <span className="font-medium">Telefone:</span> {config.telefone}
+                  </p>
+                )}
+                {config.email && (
+                  <p>
+                    <span className="font-medium">Email:</span> {config.email}
+                  </p>
+                )}
+              </address>
+            )}
+            {!loading && !config && (
+              <p className="text-sm text-blue-200">Informações de contato não disponíveis.</p>
+            )}
             
-            {/* Redes Sociais (Manter como está ou atualizar para links reais) */}
-            <div className="mt-4 flex space-x-3">
-              <a href="#" className="w-8 h-8 rounded-full bg-blue-800 dark:bg-blue-950 flex items-center justify-center text-white hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.77 7.46H14.5v-1.9c0-.9.6-1.1 1-1.1h3V.5h-4.33C10.24.5 9.5 3.44 9.5 5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4z"/>
-                </svg>
-              </a>
-              <a href="#" className="w-8 h-8 rounded-full bg-blue-800 dark:bg-blue-950 flex items-center justify-center text-white hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-                </svg>
-              </a>
-              <a href="#" className="w-8 h-8 rounded-full bg-blue-800 dark:bg-blue-950 flex items-center justify-center text-white hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M21.543 6.498C22 8.28 22 12 22 12s0 3.72-.457 5.502c-.254.985-.997 1.76-1.938 2.022C17.896 20 12 20 12 20s-5.893 0-7.605-.476c-.945-.266-1.687-1.04-1.938-2.022C2 15.72 2 12 2 12s0-3.72.457-5.502c.254-.985.997-1.76 1.938-2.022C6.107 4 12 4 12 4s5.896 0 7.605.476c.945.266 1.687 1.04 1.938 2.022zM10 15.5l6-3.5-6-3.5v7z"/>
-                </svg>
-              </a>
-            </div>
-          </div>
+            {/* Redes Sociais (Dinâmicas do Sanity) */}
+            {!loading && config && (config.facebookUrl || config.instagramUrl || config.youtubeUrl) && (
+              <div className="mt-4 flex space-x-3">
+                {config.facebookUrl && (
+                  <a 
+                    href={config.facebookUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="w-8 h-8 rounded-full bg-blue-800 dark:bg-blue-950 flex items-center justify-center text-white hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors"
+                    aria-label="Nossa página no Facebook (abre em nova aba)"
+                    title="Facebook"
+                  >
+                    <Facebook size={16} aria-hidden="true" />
+                  </a>
+                )}
+                {config.instagramUrl && (
+                  <a 
+                    href={config.instagramUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="w-8 h-8 rounded-full bg-blue-800 dark:bg-blue-950 flex items-center justify-center text-white hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors"
+                    aria-label="Nosso perfil no Instagram (abre em nova aba)"
+                    title="Instagram"
+                  >
+                    <Instagram size={16} aria-hidden="true" />
+                  </a>
+                )}
+                {config.youtubeUrl && (
+                  <a 
+                    href={config.youtubeUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="w-8 h-8 rounded-full bg-blue-800 dark:bg-blue-950 flex items-center justify-center text-white hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors"
+                    aria-label="Nosso canal no YouTube (abre em nova aba)"
+                    title="YouTube"
+                  >
+                    <Youtube size={16} aria-hidden="true" />
+                  </a>
+                )}
+              </div>
+            )}
+          </section>
         </div>
         
-        {/* Linha divisória */}
+        {/* Linha divisória e Copyright */}
         <div className="border-t border-blue-800 dark:border-blue-950 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-blue-200 dark:text-blue-300 mb-4 md:mb-0">
@@ -115,7 +196,7 @@ const Footer = () => {
             </p>
             <div className="flex items-center text-sm text-blue-200 dark:text-blue-300">
               <span>Feito com</span>
-              <Heart size={16} className="mx-1 text-red-400" />
+              <Heart size={16} className="mx-1 text-red-400" aria-hidden="true" />
               <span>para a glória de Deus</span>
             </div>
           </div>
@@ -126,3 +207,4 @@ const Footer = () => {
 };
 
 export default Footer;
+
