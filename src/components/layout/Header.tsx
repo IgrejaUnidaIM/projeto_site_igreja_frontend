@@ -25,12 +25,25 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Efeito para verificar preferência de tema do usuário ao carregar
+  useEffect(() => {
+    // Verifica se há preferência salva no localStorage
+    const savedTheme = localStorage.getItem('theme');
+    // Ou se o sistema prefere tema escuro
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // Define o estado inicial baseado na preferência salva ou do sistema
+    setDarkMode(savedTheme === 'dark' || (!savedTheme && prefersDark));
+  }, []);
+
   // Efeito para aplicar/remover a classe 'dark' no HTML baseado no estado darkMode
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);
 
@@ -57,6 +70,7 @@ const Header = () => {
     { to: "/ministerios", text: "Ministérios" },
     { to: "/eventos", text: "Eventos" }, // Rota para página
     { to: "/galeria", text: "Galeria" }, // Rota para página
+    { to: "/artigos", text: "Artigos e Sermões" }, // Rota unificada para artigos e sermões
     { to: "/contato", text: "Contato" }, // Rota para página
   ];
 
@@ -135,35 +149,36 @@ const Header = () => {
       </div>
 
       {/* Navegação Mobile (Dropdown) */}
-      {/* Adicionado id para aria-controls e role navigation */}
-      {isMenuOpen && (
-        <nav 
-          id="mobile-menu" 
-          className="md:hidden bg-white dark:bg-slate-900 shadow-lg"
-          aria-label="Navegação Móvel"
-        >
-          <div className="container mx-auto px-4 py-3 flex flex-col space-y-4">
-            {navLinks.map((link) => (
-              <Link 
-                key={link.to} 
-                to={link.to} 
-                className="mobile-nav-link" 
-                // onClick é tratado pelo useEffect que fecha ao mudar rota
-              >
-                {link.text}
-              </Link>
-            ))}
-            {/* Link Área de Membros Mobile */}
+      {/* Sempre renderiza o menu, mas controla visibilidade com classes */}
+      <nav 
+        id="mobile-menu" 
+        className={`md:hidden bg-white dark:bg-slate-900 shadow-lg transition-all duration-300 ${
+          isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+        }`}
+        aria-label="Navegação Móvel"
+        aria-hidden={!isMenuOpen}
+      >
+        <div className="container mx-auto px-4 py-3 flex flex-col space-y-4">
+          {navLinks.map((link) => (
             <Link 
-              to="/area-de-membros" 
-              className="btn-primary-mobile" 
-              // onClick é tratado pelo useEffect que fecha ao mudar rota
+              key={link.to} 
+              to={link.to} 
+              className="mobile-nav-link" 
+              tabIndex={isMenuOpen ? 0 : -1}
             >
-              Área de Membros
-            </Link> 
-          </div>
-        </nav>
-      )}
+              {link.text}
+            </Link>
+          ))}
+          {/* Link Área de Membros Mobile */}
+          <Link 
+            to="/area-de-membros" 
+            className="btn-primary-mobile" 
+            tabIndex={isMenuOpen ? 0 : -1}
+          >
+            Área de Membros
+          </Link> 
+        </div>
+      </nav>
     </header>
   );
 };

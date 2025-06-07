@@ -15,6 +15,7 @@ interface Evento {
   descricao?: any[];     // Descrição detalhada (Portable Text - array de blocos)
   local?: string;        // Local onde o evento será realizado
   imagemUrl?: string;    // URL da imagem do evento
+  horario?: string;      // Horário do evento
 }
 
 // Componente da Página de Eventos
@@ -42,7 +43,8 @@ const EventosPage: React.FC = () => {
       data,
       descricao,
       local,
-      "imagemUrl": imagem.asset->url
+      "imagemUrl": imagem.asset->url,
+      "horario": horario
     }`;
 
     console.log('EventosPage: Iniciando busca de dados...');
@@ -61,17 +63,19 @@ const EventosPage: React.FC = () => {
         setError('Falha ao carregar os dados dos eventos. Verifique a conexão ou a query.');
         setLoading(false); // Desativa o loading mesmo com erro
       });
-  }, []); // Array de dependências vazio, executa apenas uma vez
-
-  // Função auxiliar para formatar a data para o padrão brasileiro
+  }, []); // Array de dependências vazio, executa apen  /*** Função auxiliar para formatar a data para o padrão brasileiro*/
   const formatDate = (dateString?: string): string => {
     if (!dateString) return 'Data não definida';
     try {
+      // Adiciona verificação extra para o formato da data
+      console.log('EventosPage: Formatando data:', dateString);
+      
       // Cria um objeto Date a partir da string
       const date = new Date(dateString);
       // Verifica se a data é válida (importante se a string puder ser inválida)
       if (isNaN(date.getTime())) {
-        return 'Data inválida';
+        console.warn('EventosPage: Data inválida:', dateString);
+        return 'Data não definida';
       }
       // Formata para dd/mm/aaaa
       return date.toLocaleDateString('pt-BR', {
@@ -82,7 +86,7 @@ const EventosPage: React.FC = () => {
       });
     } catch (e) {
       console.error('Erro ao formatar data:', e);
-      return 'Data inválida';
+      return 'Data não definida';
     }
   };
 
@@ -153,6 +157,7 @@ const EventosPage: React.FC = () => {
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
                   <Calendar size={16} className="mr-2 flex-shrink-0" aria-hidden="true" />
                   <time dateTime={evento.data}>{formatDate(evento.data)}</time> {/* Usa tag <time> */} 
+                  {evento.horario && <span className="ml-2">às {evento.horario}</span>}
                 </div>
                 {/* Local do Evento (se houver) */}
                 {evento.local && (

@@ -143,7 +143,7 @@ const ContatoPage: React.FC = () => {
             3. Substitua a URL "#COLOQUE_SUA_URL_FORMSPREE_AQUI" abaixo pela sua URL real do Formspree.
           */}
           <form 
-            action="https://formspree.io/f/mvgrzbpw" 
+            action="#COLOQUE_SUA_URL_FORMSPREE_AQUI" 
             method="POST" 
             className="space-y-4"
           >

@@ -2,5 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Adicione seus estilos globais personalizados aqui, se houver */
+/* Estilos globais personalizados */
+
+/* Estilos para links de navegação */
+@layer components {
+  .nav-link {
+    @apply text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors;
+  }
+  
+  .mobile-nav-link {
+    @apply block py-2 px-4 text-gray-800 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-slate-800 rounded transition-colors text-center;
+  }
+  
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors;
+  }
+  
+  .btn-primary-mobile {
+    @apply block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded text-center transition-colors;
+  }
+}
+
+/* Ajustes para o menu mobile */
+#mobile-menu {
+  max-height: calc(100vh - 70px);
+  overflow-y: auto;
+}
+
+/* Ajustes para o modo escuro/claro */
+.dark body {
+  @apply bg-slate-900 text-white;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900;
+}
 

@@ -19,6 +19,7 @@ interface ConfiguracoesGerais {
     dia?: string;
     horario?: string;
     descricao?: string;
+    observacao?: string; // Para informações adicionais como "Todo segundo domingo do mês"
     _key?: string; // Sanity usa _key para itens em arrays
   }>;
 }
@@ -48,11 +49,11 @@ const Footer: React.FC = () => {
         dia,
         horario,
         descricao,
+        observacao,
         _key // Inclui a chave única para mapeamento
       }
-      // Adicione outros campos aqui
     }`;
-
+    
     console.log('Footer: Iniciando busca de configurações gerais...');
     setLoading(true);
     // setError(null);
@@ -129,6 +130,9 @@ const Footer: React.FC = () => {
                   <li key={item._key} className="flex flex-col">
                     <span className="font-medium">{item.dia} - {item.horario}</span>
                     <span className="text-blue-200 dark:text-blue-300">{item.descricao}</span>
+                    {item.observacao && (
+                      <span className="text-yellow-300 text-xs mt-1 italic">{item.observacao}</span>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -149,16 +153,32 @@ const Footer: React.FC = () => {
                 {config.endereco && <p>{config.endereco}</p>}
                 {/* Adiciona o link do Google Maps se existir */}
                 {config.linkGoogleMaps && (
-                  <p>
+                  <div className="mt-2 mb-3">
                     <a 
                       href={config.linkGoogleMaps} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-blue-300 hover:text-white underline transition-colors"
+                      className="text-blue-300 hover:text-white underline transition-colors flex items-center"
                     >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z" />
+                      </svg>
                       Ver no Google Maps
                     </a>
-                  </p>
+                    <div className="mt-3 rounded-md overflow-hidden border border-blue-800 shadow-md h-32">
+                      <iframe 
+                        src={`https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d500!2m3!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1spt-BR!2sbr!4v1623181282693!5m2!1spt-BR!2sbr&q=${encodeURIComponent(config.endereco || '')}`} 
+                        width="100%" 
+                        height="100%" 
+                        style={{ border: 0 }} 
+                        allowFullScreen={false} 
+                        loading="lazy" 
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title="Localização da Igreja"
+                        aria-label="Mapa mostrando a localização da igreja"
+                      ></iframe>
+                    </div>
+                  </div>
                 )}
                 {config.cep && <p>Cep: {config.cep}</p>}
                 {config.telefonePrincipal && (
@@ -178,7 +198,7 @@ const Footer: React.FC = () => {
             )}
             
             {/* Redes Sociais (Dinâmicas do Sanity) */}
-            {!loading && config && (config.facebookUrl || config.instagramUrl || config.youtubeUrl) && (
+            {!loading && config && (
               <div className="mt-4 flex space-x-3">
                 {config.facebookUrl && (
                   <a 
