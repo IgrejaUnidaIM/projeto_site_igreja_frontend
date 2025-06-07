@@ -69,7 +69,14 @@ const PastoresList: React.FC = () => {
                 <img 
                   src={pastor.imagemUrl} 
                   alt={`Foto de ${pastor.nome}`} 
-                  style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', marginRight: '15px' }} 
+                  style={{ 
+                    width: '80px', 
+                    height: '80px', 
+                    borderRadius: '50%', 
+                    objectFit: 'cover', 
+                    objectPosition: 'center 30%', // Ajustado para mostrar mais da parte superior (cabeça)
+                    marginRight: '15px' 
+                  }} 
                 />
               )}
               <div>

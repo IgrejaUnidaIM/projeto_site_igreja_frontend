@@ -9,18 +9,19 @@ import logo from '../../assets/images/logo.png'; // Importa o logo
 interface ConfiguracoesGerais {
   endereco?: string;
   cep?: string;
-  telefonePrincipal?: string; // Ajustado para corresponder ao nome provável no Sanity
-  emailContato?: string;    // Ajustado para corresponder ao nome provável no Sanity
-  facebookUrl?: string;
-  instagramUrl?: string;
-  youtubeUrl?: string;
-  linkGoogleMaps?: string; // Adicionado para o link do Google Maps
-  horariosCulto?: Array<{ // Adicionado para buscar horários dinamicamente
-    dia?: string;
+  telefonePrincipal?: string;
+  emailContato?: string;
+  linkMapa?: string; // Corrigido para corresponder ao schema do Sanity
+  redesSociais?: Array<{ // Corrigido para corresponder ao schema do Sanity
+    plataforma?: string;
+    url?: string;
+    _key?: string;
+  }>;
+  horariosCultos?: Array<{ // Corrigido para corresponder ao schema do Sanity
+    diaSemana?: string;
     horario?: string;
-    descricao?: string;
-    observacao?: string; // Para informações adicionais como "Todo segundo domingo do mês"
-    _key?: string; // Sanity usa _key para itens em arrays
+    descricaoCulto?: string;
+    _key?: string;
   }>;
 }
 
@@ -39,18 +40,19 @@ const Footer: React.FC = () => {
     const query = `*[_type == "configuracoesGerais"][0] {
       endereco,
       cep,
-      telefonePrincipal, // Ajustado para buscar o campo correto
-      emailContato,       // Ajustado para buscar o campo correto
-      facebookUrl,
-      instagramUrl,
-      youtubeUrl,
-      linkGoogleMaps, // Adicionado para buscar o link do Google Maps
-      horariosCulto[]{ // Busca o array de horários de culto
-        dia,
+      telefonePrincipal, 
+      emailContato,
+      linkMapa,
+      "redesSociais": redesSociais[] {
+        plataforma,
+        url,
+        _key
+      },
+      "horariosCultos": horariosCultos[] {
+        diaSemana,
         horario,
-        descricao,
-        observacao,
-        _key // Inclui a chave única para mapeamento
+        descricaoCulto,
+        _key
       }
     }`;
     
@@ -60,13 +62,21 @@ const Footer: React.FC = () => {
 
     sanityClient.fetch<ConfiguracoesGerais>(query)
       .then((data) => {
-        console.log('Footer: Configurações recebidas:', data);
+        console.log("Footer: Configurações recebidas do Sanity:", data);
+        if (!data) {
+          console.warn("Footer: Nenhum dado de configuração encontrado no Sanity.");
+        } else {
+          console.log("Footer: Endereço:", data.endereco);
+          console.log("Footer: Link do Mapa:", data.linkMapa);
+          console.log("Footer: Horários de Culto:", data.horariosCultos);
+          console.log("Footer: Redes Sociais:", data.redesSociais);
+        }
         setConfig(data);
         setLoading(false);
       })
       .catch((err) => {
-        console.error('Footer: Erro ao buscar configurações gerais:', err);
-        // setError('Falha ao carregar informações.'); // Não mostra erro no rodapé
+        console.error("Footer: Erro ao buscar configurações gerais:", err);
+        // setError("Falha ao carregar informações."); // Não mostra erro no rodapé
         setLoading(false);
       });
   }, []);
@@ -118,26 +128,23 @@ const Footer: React.FC = () => {
             </ul>
           </nav>
           
-          {/* Coluna 3: Horários (TODO: Tornar dinâmico?) */}
+          {/* Coluna 3: Horários de Culto */}
           <section aria-labelledby="footer-horarios">
             <h4 id="footer-horarios" className="text-lg font-bold mb-4 border-b border-blue-700 dark:border-blue-800 pb-2">
               Horários de Culto
             </h4>
             {loading && <p className="text-sm text-blue-200">Carregando horários...</p>}
-            {!loading && config?.horariosCulto && config.horariosCulto.length > 0 && (
+            {!loading && config?.horariosCultos && config.horariosCultos.length > 0 && (
               <ul className="space-y-2 text-sm">
-                {config.horariosCulto.map((item) => (
+                {config.horariosCultos.map((item) => (
                   <li key={item._key} className="flex flex-col">
-                    <span className="font-medium">{item.dia} - {item.horario}</span>
-                    <span className="text-blue-200 dark:text-blue-300">{item.descricao}</span>
-                    {item.observacao && (
-                      <span className="text-yellow-300 text-xs mt-1 italic">{item.observacao}</span>
-                    )}
+                    <span className="font-medium">{item.diaSemana} - {item.horario}</span>
+                    <span className="text-blue-200 dark:text-blue-300">{item.descricaoCulto}</span>
                   </li>
                 ))}
               </ul>
             )}
-            {!loading && (!config?.horariosCulto || config.horariosCulto.length === 0) && (
+            {!loading && (!config?.horariosCultos || config.horariosCultos.length === 0) && (
               <p className="text-sm text-blue-200">Horários não disponíveis.</p>
             )}
           </section>
@@ -151,11 +158,11 @@ const Footer: React.FC = () => {
             {!loading && config && (
               <address className="not-italic text-sm space-y-2">
                 {config.endereco && <p>{config.endereco}</p>}
-                {/* Adiciona o link do Google Maps se existir */}
-                {config.linkGoogleMaps && (
+                {/* Adiciona o link e o mapa do Google Maps se existirem */}
+                {config.linkMapa && (
                   <div className="mt-2 mb-3">
                     <a 
-                      href={config.linkGoogleMaps} 
+                      href={config.linkMapa} // Usa o link direto aqui
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-blue-300 hover:text-white underline transition-colors flex items-center"
@@ -165,9 +172,12 @@ const Footer: React.FC = () => {
                       </svg>
                       Ver no Google Maps
                     </a>
-                    <div className="mt-3 rounded-md overflow-hidden border border-blue-800 shadow-md h-32">
+                    {/* Mostra o iframe apenas se houver um endereço para buscar */}
+                    {config.endereco && (
+                      <div className="mt-3 rounded-md overflow-hidden border border-blue-800 shadow-md h-32">
                       <iframe 
-                        src={`https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d500!2m3!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1spt-BR!2sbr!4v1623181282693!5m2!1spt-BR!2sbr&q=${encodeURIComponent(config.endereco || '')}`} 
+                        // Usa o endereço para buscar no embed. Se não houver endereço, o iframe não será renderizado.
+                        src={`https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3966.521260322233!2d-75.57624!3d6.1944!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNsKwMTEnMzkuOCJOIDc1wrAzNCczNC41Ilc!5e0!3m2!1sen!2sus!4v1605101710790!5m2!1sen!2sus&q=${encodeURIComponent(config.endereco)}`} 
                         width="100%" 
                         height="100%" 
                         style={{ border: 0 }} 
@@ -177,7 +187,8 @@ const Footer: React.FC = () => {
                         title="Localização da Igreja"
                         aria-label="Mapa mostrando a localização da igreja"
                       ></iframe>
-                    </div>
+                      </div>
+                    )}
                   </div>
                 )}
                 {config.cep && <p>Cep: {config.cep}</p>}
@@ -198,44 +209,56 @@ const Footer: React.FC = () => {
             )}
             
             {/* Redes Sociais (Dinâmicas do Sanity) */}
-            {!loading && config && (
+            {!loading && config && config.redesSociais && config.redesSociais.length > 0 && (
               <div className="mt-4 flex space-x-3">
-                {config.facebookUrl && (
-                  <a 
-                    href={config.facebookUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="w-8 h-8 rounded-full bg-blue-800 dark:bg-blue-950 flex items-center justify-center text-white hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors"
-                    aria-label="Nossa página no Facebook (abre em nova aba)"
-                    title="Facebook"
-                  >
-                    <Facebook size={16} aria-hidden="true" />
-                  </a>
-                )}
-                {config.instagramUrl && (
-                  <a 
-                    href={config.instagramUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="w-8 h-8 rounded-full bg-blue-800 dark:bg-blue-950 flex items-center justify-center text-white hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors"
-                    aria-label="Nosso perfil no Instagram (abre em nova aba)"
-                    title="Instagram"
-                  >
-                    <Instagram size={16} aria-hidden="true" />
-                  </a>
-                )}
-                {config.youtubeUrl && (
-                  <a 
-                    href={config.youtubeUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="w-8 h-8 rounded-full bg-blue-800 dark:bg-blue-950 flex items-center justify-center text-white hover:bg-blue-700 dark:hover:bg-blue-900 transition-colors"
-                    aria-label="Nosso canal no YouTube (abre em nova aba)"
-                    title="YouTube"
-                  >
-                    <Youtube size={16} aria-hidden="true" />
-                  </a>
-                )}
+                {config.redesSociais.map((rede) => {
+                  // Determina o ícone e a cor com base na plataforma
+                  let IconComponent;
+                  let bgColorClass = "";
+                  let hoverColorClass = "";
+                  let ariaLabel = "";
+                  
+                  switch(rede.plataforma) {
+                    case 'facebook':
+                      IconComponent = Facebook;
+                      bgColorClass = "bg-blue-700 dark:bg-blue-800";
+                      hoverColorClass = "hover:bg-blue-600 dark:hover:bg-blue-700";
+                      ariaLabel = "Nossa página no Facebook (abre em nova aba)";
+                      break;
+                    case 'instagram':
+                      IconComponent = Instagram;
+                      bgColorClass = "bg-pink-600 dark:bg-pink-700";
+                      hoverColorClass = "hover:bg-pink-500 dark:hover:bg-pink-600";
+                      ariaLabel = "Nosso perfil no Instagram (abre em nova aba)";
+                      break;
+                    case 'youtube':
+                      IconComponent = Youtube;
+                      bgColorClass = "bg-red-600 dark:bg-red-700";
+                      hoverColorClass = "hover:bg-red-500 dark:hover:bg-red-600";
+                      ariaLabel = "Nosso canal no YouTube (abre em nova aba)";
+                      break;
+                    default:
+                      // Caso não seja uma das plataformas acima, usa um estilo padrão
+                      IconComponent = Facebook; // Ícone padrão
+                      bgColorClass = "bg-gray-600 dark:bg-gray-700";
+                      hoverColorClass = "hover:bg-gray-500 dark:hover:bg-gray-600";
+                      ariaLabel = `Nossa página em ${rede.plataforma} (abre em nova aba)`;
+                  }
+                  
+                  return (
+                    <a 
+                      key={rede._key}
+                      href={rede.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className={`w-10 h-10 rounded-full ${bgColorClass} flex items-center justify-center text-white ${hoverColorClass} transition-colors`}
+                      aria-label={ariaLabel}
+                      title={rede.plataforma.charAt(0).toUpperCase() + rede.plataforma.slice(1)}
+                    >
+                      <IconComponent size={20} aria-hidden="true" />
+                    </a>
+                  );
+                })}
               </div>
             )}
           </section>

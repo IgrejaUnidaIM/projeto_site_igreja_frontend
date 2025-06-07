@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient.js';
 import { PortableText } from '@portabletext/react'; // Importa o componente PortableText
@@ -9,13 +8,13 @@ import { Calendar, MapPin, Image as ImageIcon, Loader, AlertCircle } from 'lucid
  * Contém informações como título, data, descrição, local e imagem do evento
  */
 interface Evento {
-  _id: string;           // ID único do Sanity
-  titulo?: string;       // Título do evento
-  data?: string;         // Data do evento (formato string, ex: YYYY-MM-DD ou ISO)
-  descricao?: any[];     // Descrição detalhada (Portable Text - array de blocos)
-  local?: string;        // Local onde o evento será realizado
-  imagemUrl?: string;    // URL da imagem do evento
-  horario?: string;      // Horário do evento
+  _id: string;                // ID único do Sanity
+  titulo?: string;            // Título do evento
+  dataHoraInicio?: string;    // Data e hora de início do evento (formato ISO)
+  dataHoraFim?: string;       // Data e hora de término do evento (formato ISO)
+  descricao?: any[];          // Descrição detalhada (Portable Text - array de blocos)
+  local?: string;             // Local onde o evento será realizado
+  imagem_destaque?: string;   // URL da imagem de destaque do evento
 }
 
 // Componente da Página de Eventos
@@ -27,43 +26,7 @@ const EventosPage: React.FC = () => {
   // Estado para armazenar mensagens de erro
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Efeito para buscar os dados dos eventos do Sanity quando o componente montar
-   */
-  useEffect(() => {
-    /**
-     * Query GROQ para buscar todos os documentos do tipo 'evento'
-     * - Ordenados por data (mais recentes primeiro)
-     * - Seleciona ID, título, data, descrição, local e URL da imagem
-     * - Ajuste o nome do schema ('evento') conforme configurado no seu Sanity
-     */
-    const query = `*[_type == "evento"] | order(data desc) {
-      _id,
-      titulo,
-      data,
-      descricao,
-      local,
-      "imagemUrl": imagem.asset->url,
-      "horario": horario
-    }`;
-
-    console.log('EventosPage: Iniciando busca de dados...');
-    setLoading(true); // Ativa o loading
-    setError(null); // Limpa erros anteriores
-
-    // Executa a query no Sanity
-    sanityClient.fetch<Evento[]>(query) // Especifica o tipo esperado
-      .then((data) => {
-        console.log('EventosPage: Dados recebidos do Sanity:', data);
-        setEventos(data || []); // Atualiza o estado com os dados (ou array vazio)
-        setLoading(false); // Desativa o loading
-      })
-      .catch((err) => {
-        console.error('EventosPage: Erro ao buscar eventos:', err);
-        setError('Falha ao carregar os dados dos eventos. Verifique a conexão ou a query.');
-        setLoading(false); // Desativa o loading mesmo com erro
-      });
-  }, []); // Array de dependências vazio, executa apen  /*** Função auxiliar para formatar a data para o padrão brasileiro*/
+  // Função para formatar a data e hora para o padrão brasileiro
   const formatDate = (dateString?: string): string => {
     if (!dateString) return 'Data não definida';
     try {
@@ -89,6 +52,72 @@ const EventosPage: React.FC = () => {
       return 'Data não definida';
     }
   };
+  
+  // Função para extrair o horário da data ISO
+  const formatTime = (dateString?: string): string => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return '';
+      }
+      return date.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'UTC'
+      });
+    } catch (e) {
+      console.error('Erro ao formatar horário:', e);
+      return '';
+    }
+  };
+
+  /**
+   * Efeito para buscar os dados dos eventos do Sanity quando o componente montar
+   */
+  useEffect(() => {
+    /**
+     * Query GROQ para buscar todos os documentos do tipo 'evento'
+     * - Ordenados por data (mais recentes primeiro)
+     * - Seleciona ID, título, dataHoraInicio, descrição, local e URL da imagem
+     * - Ajuste o nome do schema ('evento') conforme configurado no seu Sanity
+     */
+    const query = `*[_type == "evento"] | order(dataHoraInicio desc) {
+      _id,
+      titulo,
+      dataHoraInicio,
+      dataHoraFim,
+      descricao,
+      local,
+      "imagem_destaque": imagem_destaque.asset->url
+    }`;
+
+    console.log('EventosPage: Iniciando busca de dados...');
+    setLoading(true); // Ativa o loading
+    setError(null); // Limpa erros anteriores
+
+    // Executa a query no Sanity
+    sanityClient.fetch<Evento[]>(query) // Especifica o tipo esperado
+      .then((data) => {
+        console.log('EventosPage: Dados recebidos do Sanity:', data);
+        // Log detalhado para cada evento
+        if (data && data.length > 0) {
+          data.forEach((evento, index) => {
+            console.log(`EventosPage: Evento ${index + 1} - ID: ${evento._id}`);
+            console.log(`EventosPage: Evento ${index + 1} - Título: ${evento.titulo}`);
+            console.log(`EventosPage: Evento ${index + 1} - Data recebida: ${evento.dataHoraInicio}`);
+            console.log(`EventosPage: Evento ${index + 1} - Imagem URL recebida: ${evento.imagem_destaque}`);
+          });
+        }
+        setEventos(data || []); // Atualiza o estado com os dados (ou array vazio)
+        setLoading(false); // Desativa o loading
+      })
+      .catch((err) => {
+        console.error('EventosPage: Erro ao buscar eventos:', err);
+        setError('Falha ao carregar os dados dos eventos. Verifique a conexão ou a query.');
+        setLoading(false); // Desativa o loading mesmo com erro
+      });
+  }, []); // Array de dependências vazio, executa apenas na montagem
 
   return (
     <div className="container mx-auto px-4 py-16 min-h-screen">
@@ -136,9 +165,9 @@ const EventosPage: React.FC = () => {
             <article key={evento._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden flex flex-col" aria-labelledby={`evento-titulo-${evento._id}`}>
               {/* Imagem do Evento (ou Placeholder) */}
               <div className="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500 overflow-hidden">
-                {evento.imagemUrl ? (
+                {evento.imagem_destaque ? (
                   <img 
-                    src={evento.imagemUrl} 
+                    src={evento.imagem_destaque} 
                     alt={`Imagem do evento: ${evento.titulo || 'Evento sem título'}`} // Alt text descritivo
                     className="w-full h-full object-cover" // Garante que a imagem cubra a área
                     loading="lazy" // Carregamento preguiçoso para imagens
@@ -156,8 +185,19 @@ const EventosPage: React.FC = () => {
                 {/* Data do Evento */}
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
                   <Calendar size={16} className="mr-2 flex-shrink-0" aria-hidden="true" />
-                  <time dateTime={evento.data}>{formatDate(evento.data)}</time> {/* Usa tag <time> */} 
-                  {evento.horario && <span className="ml-2">às {evento.horario}</span>}
+                  <time dateTime={evento.dataHoraInicio}>{formatDate(evento.dataHoraInicio)}</time> {/* Usa tag <time> */} 
+                  <div className="ml-2 flex flex-col">
+                    <span className="flex items-center">
+                      <span className="font-medium">Início:</span> 
+                      <span className="ml-1">{formatTime(evento.dataHoraInicio)}</span>
+                    </span>
+                    {evento.dataHoraFim && (
+                      <span className="flex items-center mt-1">
+                        <span className="font-medium">Término:</span> 
+                        <span className="ml-1">{formatTime(evento.dataHoraFim)}</span>
+                      </span>
+                    )}
+                  </div>
                 </div>
                 {/* Local do Evento (se houver) */}
                 {evento.local && (
@@ -203,4 +243,3 @@ const EventosPage: React.FC = () => {
  * - Cards com imagem, título, data, local e descrição
  */
 export default EventosPage;
-

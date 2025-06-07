@@ -65,7 +65,7 @@ const Header = () => {
   // Define os links de navegação (todas são páginas separadas agora)
   const navLinks = [
     { to: "/", text: "Início" },
-    { to: "/historia", text: "Nossa História" }, // Rota para página
+    { to: "/nossa-historia", text: "Nossa História" }, // Rota corrigida para nossa-historia
     { to: "/pastores", text: "Pastores" },
     { to: "/ministerios", text: "Ministérios" },
     { to: "/eventos", text: "Eventos" }, // Rota para página
@@ -78,7 +78,9 @@ const Header = () => {
     // Tag header com classes dinâmicas para estilo baseado na rolagem
     <header 
       className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm shadow-md' : 'bg-transparent'
+        scrolled 
+          ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm shadow-md'
+          : 'bg-transparent dark:bg-transparent' // Garante fundo transparente no modo escuro quando não rolado
       }`}
       role="banner" // Adiciona role para acessibilidade
     >
@@ -94,12 +96,10 @@ const Header = () => {
               />
             </div>
             <div className="ml-3">
-              <h1 className="text-base md:text-xl font-bold text-blue-800 dark:text-blue-400 whitespace-nowrap"> {/* Ajusta tamanho e evita quebra de linha */}
+              {/* Ajusta cor do texto para melhor contraste em modo escuro */}
+              <h1 className="text-base md:text-xl font-bold text-blue-800 dark:text-blue-300 whitespace-nowrap"> 
                 1ª Igreja Unida em Inácio Monteiro
               </h1>
-              {/* <p className="text-xs md:text-sm text-blue-600 dark:text-blue-300">
-                de Inácio Monteiro
-              </p> */}
             </div>
           </Link>
         </div>
@@ -116,29 +116,29 @@ const Header = () => {
           {/* Botão para alternar modo claro/escuro - Estilo ajustado para visibilidade */}
           <button 
             onClick={toggleDarkMode} 
-            className="p-2 rounded-full border border-gray-300 dark:border-slate-700 bg-gray-50 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 transition-colors"
-            aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"} // aria-label já estava bom
-            title={darkMode ? "Ativar modo claro" : "Ativar modo escuro"} // Adiciona title para tooltip
+            className="p-2.5 rounded-full border-2 border-blue-500 dark:border-blue-400 bg-gray-50 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 transition-colors shadow-md"
+            aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
+            title={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
           >
-            {darkMode ? <Sun size={20} aria-hidden="true" /> : <Moon size={20} aria-hidden="true" />}
+            {darkMode ? <Sun size={22} aria-hidden="true" /> : <Moon size={22} aria-hidden="true" />}
           </button>
         </nav>
 
         {/* Botões Mobile (Dark Mode e Menu) */}
-        <div className="flex items-center md:hidden">
+        <div className="flex items-center space-x-3 md:hidden"> {/* Aumentado espaçamento entre botões */}
           {/* Botão Dark Mode Mobile */}
           <button 
             onClick={toggleDarkMode} 
-            className="p-2 mr-2 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200"
+            className="p-2.5 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors border-2 border-blue-500 dark:border-blue-400 shadow-md" // Melhorado visibilidade com borda e sombra
             aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
             title={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
           >
-            {darkMode ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
+            {darkMode ? <Sun size={22} aria-hidden="true" /> : <Moon size={22} aria-hidden="true" />}
           </button>
           {/* Botão Abrir/Fechar Menu Mobile */}
           <button 
             onClick={toggleMenu}
-            className="p-2 rounded-md bg-blue-600 text-white"
+            className="p-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-md" // Adicionado sombra
             aria-label={isMenuOpen ? "Fechar menu de navegação" : "Abrir menu de navegação"} // aria-label mais descritivo
             aria-expanded={isMenuOpen} // Indica se o menu está expandido
             aria-controls="mobile-menu" // Associa ao menu que ele controla
@@ -149,22 +149,23 @@ const Header = () => {
       </div>
 
       {/* Navegação Mobile (Dropdown) */}
-      {/* Sempre renderiza o menu, mas controla visibilidade com classes */}
+      {/* Controla visibilidade e animação com classes Tailwind */}
       <nav 
         id="mobile-menu" 
-        className={`md:hidden bg-white dark:bg-slate-900 shadow-lg transition-all duration-300 ${
-          isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+        className={`md:hidden bg-white dark:bg-slate-900 shadow-lg transition-all duration-300 ease-in-out overflow-hidden ${
+          isMenuOpen ? 'max-h-[calc(100vh-70px)] opacity-100' : 'max-h-0 opacity-0'
         }`}
         aria-label="Navegação Móvel"
         aria-hidden={!isMenuOpen}
       >
-        <div className="container mx-auto px-4 py-3 flex flex-col space-y-4">
+        <div className="container mx-auto px-4 py-5 flex flex-col space-y-4"> {/* Aumentado py para mais espaço */}
           {navLinks.map((link) => (
             <Link 
               key={link.to} 
               to={link.to} 
-              className="mobile-nav-link" 
-              tabIndex={isMenuOpen ? 0 : -1}
+              className="mobile-nav-link" // Estilo definido em index.css
+              tabIndex={isMenuOpen ? 0 : -1} // Controla foco
+              onClick={() => setIsMenuOpen(false)} // Fecha o menu ao clicar
             >
               {link.text}
             </Link>
@@ -172,8 +173,9 @@ const Header = () => {
           {/* Link Área de Membros Mobile */}
           <Link 
             to="/area-de-membros" 
-            className="btn-primary-mobile" 
-            tabIndex={isMenuOpen ? 0 : -1}
+            className="btn-primary-mobile" // Estilo definido em index.css
+            tabIndex={isMenuOpen ? 0 : -1} // Controla foco
+            onClick={() => setIsMenuOpen(false)} // Fecha o menu ao clicar
           >
             Área de Membros
           </Link> 
