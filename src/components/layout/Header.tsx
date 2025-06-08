@@ -33,7 +33,15 @@ const Header = () => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
     // Define o estado inicial baseado na preferência salva ou do sistema
-    setDarkMode(savedTheme === 'dark' || (!savedTheme && prefersDark));
+    const shouldUseDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    setDarkMode(shouldUseDarkMode);
+    
+    // Aplica o tema imediatamente para evitar flash
+    if (shouldUseDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }, []);
 
   // Efeito para aplicar/remover a classe 'dark' no HTML baseado no estado darkMode
@@ -54,6 +62,15 @@ const Header = () => {
 
   // Função para alternar o modo escuro
   const toggleDarkMode = () => {
+    // Força a atualização do DOM imediatamente
+    if (darkMode) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+    // Atualiza o estado após a manipulação do DOM
     setDarkMode(!darkMode);
   };
 
@@ -84,20 +101,20 @@ const Header = () => {
       }`}
       role="banner" // Adiciona role para acessibilidade
     >
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo e Nome da Igreja - Centralizado */}
-        <div className="flex items-center">
+      <div className="container mx-auto px-3 py-2 flex items-center justify-between"> {/* Reduzido padding vertical e horizontal para mobile */}
+        {/* Logo e Nome da Igreja - Otimizado para mobile */}
+        <div className="flex items-center flex-shrink-0 min-w-0"> {/* Adicionado flex-shrink-0 e min-w-0 */}
           <Link to="/" className="flex items-center" aria-label="Página Inicial">
-            <div className="relative w-12 h-12 md:w-16 md:h-16 overflow-hidden flex-shrink-0"> {/* Ajusta tamanho e evita encolher */}
+            <div className="relative w-10 h-10 md:w-16 md:h-16 overflow-hidden flex-shrink-0"> {/* Reduzido tamanho no mobile */}
               <img 
                 src={logo} 
                 alt="Logotipo da 1ª Igreja Unida de Inácio Monteiro" // Alt text mais descritivo
                 className="w-full h-full object-contain transition-transform hover:scale-110 duration-300"
               />
             </div>
-            <div className="ml-3">
+            <div className="ml-2 md:ml-3 min-w-0"> {/* Reduzido margin no mobile e adicionado min-w-0 */}
               {/* Ajusta cor do texto para melhor contraste em modo escuro */}
-              <h1 className="text-base md:text-xl font-bold text-blue-800 dark:text-blue-300 whitespace-nowrap"> 
+              <h1 className="text-sm md:text-xl font-bold text-blue-800 dark:text-blue-300 whitespace-nowrap truncate"> {/* Reduzido tamanho no mobile e adicionado truncate */}
                 1ª Igreja Unida em Inácio Monteiro
               </h1>
             </div>
@@ -116,34 +133,34 @@ const Header = () => {
           {/* Botão para alternar modo claro/escuro - Estilo ajustado para visibilidade */}
           <button 
             onClick={toggleDarkMode} 
-            className="p-2.5 rounded-full border-2 border-blue-500 dark:border-blue-400 bg-gray-50 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 transition-colors shadow-md"
+            className="p-2 rounded-full border-2 border-blue-500 dark:border-blue-400 bg-gray-50 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 transition-colors shadow-md mr-1"
             aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
             title={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
           >
-            {darkMode ? <Sun size={22} aria-hidden="true" /> : <Moon size={22} aria-hidden="true" />}
+            {darkMode ? <Sun size={20} aria-hidden="true" /> : <Moon size={20} aria-hidden="true" />}
           </button>
         </nav>
 
         {/* Botões Mobile (Dark Mode e Menu) */}
-        <div className="flex items-center space-x-3 md:hidden"> {/* Aumentado espaçamento entre botões */}
+        <div className="flex items-center space-x-2 md:hidden absolute right-3 top-2.5"> {/* Posicionamento absoluto para garantir visibilidade */}
           {/* Botão Dark Mode Mobile */}
           <button 
             onClick={toggleDarkMode} 
-            className="p-2.5 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors border-2 border-blue-500 dark:border-blue-400 shadow-md" // Melhorado visibilidade com borda e sombra
+            className="p-1.5 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors border-2 border-blue-500 dark:border-blue-400 shadow-md z-50" // Reduzido padding, aumentado z-index
             aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
             title={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
           >
-            {darkMode ? <Sun size={22} aria-hidden="true" /> : <Moon size={22} aria-hidden="true" />}
+            {darkMode ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
           </button>
           {/* Botão Abrir/Fechar Menu Mobile */}
           <button 
             onClick={toggleMenu}
-            className="p-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-md" // Adicionado sombra
-            aria-label={isMenuOpen ? "Fechar menu de navegação" : "Abrir menu de navegação"} // aria-label mais descritivo
-            aria-expanded={isMenuOpen} // Indica se o menu está expandido
-            aria-controls="mobile-menu" // Associa ao menu que ele controla
+            className="p-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-md z-50" // Reduzido padding, aumentado z-index
+            aria-label={isMenuOpen ? "Fechar menu de navegação" : "Abrir menu de navegação"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
           >
-            {isMenuOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
+            {isMenuOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
           </button>
         </div>
       </div>

@@ -3,28 +3,28 @@ import React from 'react';
 // Componente da página Nossa História
 const NossaHistoriaPage: React.FC = () => {
   return (
-    <div className="container mx-auto px-4 py-8 dark:bg-gray-900 dark:text-gray-100">
-      <h1 className="text-4xl font-bold text-center mb-8 text-blue-800 dark:text-blue-300">Nossa História</h1>
+    <div className="container mx-auto px-3 md:px-4 py-6 md:py-8 dark:bg-gray-900 dark:text-gray-100 min-h-screen"> {/* Reduzido padding no mobile e adicionado min-h-screen */}
+      <h1 className="text-2xl md:text-4xl font-bold text-center mb-6 md:mb-8 text-blue-800 dark:text-blue-300">Nossa História</h1> {/* Reduzido tamanho no mobile */}
 
       {/* Seção: A História da Igreja Unida de Inácio Monteiro */}
-      <section className="mb-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 dark:text-gray-200">A Fundação da Igreja</h2>
-        <p className="text-gray-700 dark:text-gray-300 mb-4">
+      <section className="mb-8 md:mb-12 bg-white dark:bg-gray-800 p-4 md:p-6 rounded-lg shadow-md"> {/* Reduzido padding e margin no mobile */}
+        <h2 className="text-xl md:text-3xl font-semibold mb-3 md:mb-4 text-gray-800 dark:text-gray-200">A Fundação da Igreja</h2> {/* Reduzido tamanho no mobile */}
+        <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3 md:mb-4 leading-relaxed"> {/* Reduzido tamanho e margin no mobile */}
           No ano de 1985, era inaugurada a COHAB Juscelino, como parte do maior complexo de conjuntos habitacionais populares da América do sul, tendo sido construído no início da década de 80, pela Prefeitura do Município de São Paulo, denominado Cidade Tiradentes, situado no extremo leste da capital paulista, construído para se bairro dormitório.
         </p>
-        <p className="text-gray-700 dark:text-gray-300 mb-4">
+        <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3 md:mb-4 leading-relaxed">
           Milhares de pessoas, vindas das mais diversas partes da cidade, estavam finalmente realizando o sonho da casa própria. Ali se formava também um cenário propício para a propagação do evangelho.
         </p>
-        <p className="text-gray-700 dark:text-gray-300 mb-4">
+        <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3 md:mb-4 leading-relaxed">
           Muitas pessoas salvas por Jesus e ávidas pela Palavra, não tinham lugar próprio para culto, por isso, a <strong>1ª Igreja Unida de Guaianazes</strong>, a nossa Sede Regional, inaugurou, em <strong>02/08/1988</strong>, um ponto de pregação no lar da irmã <strong>Emília Alexandre de Paula</strong>, que, mais tarde, tornou-se pastora da igreja.
         </p>
-        <p className="text-gray-700 dark:text-gray-300 mb-4">
+        <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-3 md:mb-4 leading-relaxed">
           À medida que o número de membros crescia, os irmãos começaram a procurar locais mais adequados para cultuar ao Senhor, até que adquiriram o imóvel no recém inaugurado Conjunto Habitacional Inácio Monteiro, situado na <strong>Rua Cachoeira Jaciquara, 175</strong>. A Inauguração do templo ocorreu em 22/01/1994, onde se encontra instalado até os dias de hoje, para a glória de Deus.
         </p>
 
-        <h3 className="text-2xl font-semibold mt-6 mb-3 text-gray-800 dark:text-gray-200">Pastores que Fizeram História</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600">
+        <h3 className="text-lg md:text-2xl font-semibold mt-4 md:mt-6 mb-2 md:mb-3 text-gray-800 dark:text-gray-200">Pastores que Fizeram História</h3> {/* Reduzido tamanho e margins no mobile */}
+        <div className="overflow-x-auto -mx-2 md:mx-0"> {/* Adicionado margin negativo no mobile para melhor uso do espaço */}
+          <table className="min-w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-xs md:text-sm"> {/* Reduzido tamanho da fonte no mobile */}
             <thead>
               <tr className="bg-gray-100 dark:bg-gray-600">
                 <th className="py-2 px-4 border-b dark:border-gray-500 text-left text-gray-700 dark:text-gray-200">Pastores</th>
