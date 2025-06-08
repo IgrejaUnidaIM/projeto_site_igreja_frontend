@@ -103,7 +103,7 @@ const Header = () => {
     >
       <div className="container mx-auto px-3 py-2 flex items-center justify-between"> {/* Reduzido padding vertical e horizontal para mobile */}
         {/* Logo e Nome da Igreja - Otimizado para mobile */}
-        <div className="flex items-center flex-shrink-0 min-w-0"> {/* Adicionado flex-shrink-0 e min-w-0 */}
+        <div className="flex items-center flex-shrink-0 min-w-0 relative"> {/* Adicionado relative para posicionamento */}
           <Link to="/" className="flex items-center" aria-label="Página Inicial">
             <div className="relative w-10 h-10 md:w-16 md:h-16 overflow-hidden flex-shrink-0"> {/* Reduzido tamanho no mobile */}
               <img 
@@ -119,6 +119,16 @@ const Header = () => {
               </h1>
             </div>
           </Link>
+          
+          {/* Botão Dark Mode Mobile - Reposicionado abaixo do logo */}
+          <button 
+            onClick={toggleDarkMode} 
+            className="md:hidden absolute -bottom-8 left-3 p-1.5 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors border-2 border-blue-500 dark:border-blue-400 shadow-md z-50" // Posicionado abaixo do logo
+            aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
+            title={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
+          >
+            {darkMode ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
+          </button>
         </div>
 
         {/* Navegação Desktop */}
@@ -141,17 +151,8 @@ const Header = () => {
           </button>
         </nav>
 
-        {/* Botões Mobile (Dark Mode e Menu) */}
-        <div className="flex items-center space-x-2 md:hidden absolute right-3 top-4"> {/* Ajustado top de 2.5 para 4 */}
-          {/* Botão Dark Mode Mobile */}
-          <button 
-            onClick={toggleDarkMode} 
-            className="p-1.5 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors border-2 border-blue-500 dark:border-blue-400 shadow-md z-50" // Reduzido padding, aumentado z-index
-            aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
-            title={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
-          >
-            {darkMode ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
-          </button>
+        {/* Botões Mobile (Menu) - Removido o botão Dark Mode daqui */}
+        <div className="flex items-center md:hidden absolute right-3 top-4">
           {/* Botão Abrir/Fechar Menu Mobile */}
           <button 
             onClick={toggleMenu}
