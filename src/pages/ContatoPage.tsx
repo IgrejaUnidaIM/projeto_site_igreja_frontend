@@ -154,7 +154,7 @@ const ContatoPage: React.FC = () => {
           {/* </div> */}
         </div>
 
-        {/* Formulário de Contato - Implementação com handler local */}
+        {/* Formulário de Contato - Integração com Formspree */}
         <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Envie sua Mensagem</h2>
           
@@ -167,8 +167,23 @@ const ContatoPage: React.FC = () => {
           )}
           
           <form 
-            onSubmit={handleSubmit}
+            action="https://formspree.io/f/mvgrzbpw"
+            method="POST"
             className="space-y-4"
+            onSubmit={(e) => {
+              // Captura o evento para mostrar mensagem de sucesso
+              const form = e.currentTarget;
+              // Deixa o formulário ser enviado normalmente para o Formspree
+              // mas também atualiza o estado para mostrar mensagem de sucesso
+              setTimeout(() => {
+                setFormSubmitted(true);
+                // Limpa a mensagem após alguns segundos
+                setTimeout(() => {
+                  setFormSubmitted(false);
+                  form.reset();
+                }, 3000);
+              }, 500);
+            }}
           >
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome</label>
@@ -239,4 +254,3 @@ const ContatoPage: React.FC = () => {
  * - Busca dinâmica de informações de contato do Sanity
  */
 export default ContatoPage;
-

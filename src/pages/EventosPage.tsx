@@ -57,23 +57,35 @@ const EventosPage: React.FC = () => {
   const formatTime = (dateString?: string): string => {
     if (!dateString) return '';
     try {
-      // Extrair diretamente as horas e minutos da string ISO para evitar conversão de fuso
-      const match = dateString.match(/T(\d{2}):(\d{2})/);
-      if (match && match.length >= 3) {
-        const [_, hours, minutes] = match;
+      console.log('EventosPage: Formatando horário para string:', dateString);
+      
+      // Método 1: Extrair diretamente as horas e minutos da string ISO
+      // Formato esperado: "2025-06-14T18:00:00.000Z" ou similar
+      const isoMatch = dateString.match(/T(\d{2}):(\d{2})/);
+      if (isoMatch && isoMatch.length >= 3) {
+        const hours = isoMatch[1];
+        const minutes = isoMatch[2];
+        console.log(`EventosPage: Horário extraído diretamente: ${hours}:${minutes}`);
         return `${hours}:${minutes}`;
       }
       
-      // Fallback para o método anterior, mas sem conversão de fuso
+      // Método 2: Usar o objeto Date mas forçar o fuso horário
+      // Cria um objeto Date a partir da string
       const date = new Date(dateString);
+      
+      // Verifica se a data é válida
       if (isNaN(date.getTime())) {
+        console.warn('EventosPage: Data inválida para formatação de horário:', dateString);
         return '';
       }
-      return date.toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit',
-        timeZone: 'America/Sao_Paulo' // Usa o fuso horário de São Paulo para garantir horário correto
-      });
+      
+      // Extrai horas e minutos diretamente do objeto Date
+      // Importante: NÃO usar toLocaleTimeString que pode aplicar conversões de fuso
+      const rawHours = date.getUTCHours().toString().padStart(2, '0');
+      const rawMinutes = date.getUTCMinutes().toString().padStart(2, '0');
+      
+      console.log(`EventosPage: Horário extraído via UTC: ${rawHours}:${rawMinutes}`);
+      return `${rawHours}:${rawMinutes}`;
     } catch (e) {
       console.error('Erro ao formatar horário:', e);
       return '';
@@ -113,8 +125,9 @@ const EventosPage: React.FC = () => {
           data.forEach((evento, index) => {
             console.log(`EventosPage: Evento ${index + 1} - ID: ${evento._id}`);
             console.log(`EventosPage: Evento ${index + 1} - Título: ${evento.titulo}`);
-            console.log(`EventosPage: Evento ${index + 1} - Data recebida: ${evento.dataHoraInicio}`);
-            console.log(`EventosPage: Evento ${index + 1} - Imagem URL recebida: ${evento.imagem_destaque}`);
+            console.log(`EventosPage: Evento ${index + 1} - Data início: ${evento.dataHoraInicio}`);
+            console.log(`EventosPage: Evento ${index + 1} - Data fim: ${evento.dataHoraFim}`);
+            console.log(`EventosPage: Evento ${index + 1} - Imagem URL: ${evento.imagem_destaque}`);
           });
         }
         setEventos(data || []); // Atualiza o estado com os dados (ou array vazio)

@@ -142,7 +142,7 @@ const Header = () => {
         </nav>
 
         {/* Botões Mobile (Dark Mode e Menu) */}
-        <div className="flex items-center space-x-2 md:hidden absolute right-3 top-2.5"> {/* Posicionamento absoluto para garantir visibilidade */}
+        <div className="flex items-center space-x-2 md:hidden absolute right-3 top-4"> {/* Ajustado top de 2.5 para 4 */}
           {/* Botão Dark Mode Mobile */}
           <button 
             onClick={toggleDarkMode} 
