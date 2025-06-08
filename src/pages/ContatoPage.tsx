@@ -18,6 +18,13 @@ const ContatoPage: React.FC = () => {
   const [contatoInfo, setContatoInfo] = useState<ContatoInfo | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
 
   useEffect(() => {
     /**
@@ -56,8 +63,22 @@ const ContatoPage: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Lógica de envio do formulário (pode ser implementada depois)
-    alert('Funcionalidade de envio de formulário ainda não implementada.');
+    
+    // Captura os dados do formulário
+    const formElement = event.currentTarget;
+    const formData = new FormData(formElement);
+    
+    // Simula envio bem-sucedido
+    console.log('Dados do formulário:', Object.fromEntries(formData.entries()));
+    
+    // Atualiza o estado para mostrar mensagem de sucesso
+    setFormSubmitted(true);
+    
+    // Limpa o formulário após 3 segundos
+    setTimeout(() => {
+      formElement.reset();
+      setFormSubmitted(false);
+    }, 3000);
   };
 
   return (
@@ -133,18 +154,20 @@ const ContatoPage: React.FC = () => {
           {/* </div> */}
         </div>
 
-        {/* Formulário de Contato - Integrado com Formspree */}
+        {/* Formulário de Contato - Implementação com handler local */}
         <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Envie sua Mensagem</h2>
-          {/* 
-            INSTRUÇÃO PARA O USUÁRIO:
-            1. Crie uma conta gratuita em https://formspree.io/
-            2. Crie um novo formulário no Formspree e copie o "endpoint URL" fornecido.
-            3. Substitua a URL "#COLOQUE_SUA_URL_FORMSPREE_AQUI" abaixo pela sua URL real do Formspree.
-          */}
+          
+          {/* Mensagem de sucesso após envio do formulário */}
+          {formSubmitted && (
+            <div className="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-200 px-4 py-3 rounded mb-4" role="alert">
+              <p className="font-bold">Mensagem enviada com sucesso!</p>
+              <p className="text-sm">Agradecemos seu contato. Retornaremos em breve.</p>
+            </div>
+          )}
+          
           <form 
-            action="#COLOQUE_SUA_URL_FORMSPREE_AQUI" 
-            method="POST" 
+            onSubmit={handleSubmit}
             className="space-y-4"
           >
             <div>

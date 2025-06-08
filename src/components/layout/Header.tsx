@@ -114,30 +114,30 @@ const Header = () => {
             </div>
             <div className="ml-2 md:ml-3 min-w-0"> {/* Reduzido margin no mobile e adicionado min-w-0 */}
               {/* Ajusta cor do texto para melhor contraste em modo escuro */}
-              <h1 className="text-sm md:text-xl font-bold text-blue-800 dark:text-blue-300 whitespace-nowrap truncate"> {/* Reduzido tamanho no mobile e adicionado truncate */}
-                1ª Igreja Unida em Inácio Monteiro
+              <h1 className="text-sm md:text-xl font-bold text-blue-800 dark:text-blue-300 break-words"> {/* Removido truncate, adicionado break-words */}
+                <span className="inline md:inline">1ª Igreja Unida</span> <span className="inline md:inline">em Inácio Monteiro</span>
               </h1>
             </div>
           </Link>
         </div>
 
         {/* Navegação Desktop */}
-        <nav className="hidden md:flex items-center space-x-6" aria-label="Navegação Principal">
+        <nav className="hidden md:flex items-center space-x-4 lg:space-x-6" aria-label="Navegação Principal"> {/* Reduzido espaçamento em telas médias */}
           {navLinks.map((link) => (
             <Link key={link.to} to={link.to} className="nav-link">
               {link.text}
             </Link>
           ))}
           {/* Link para Área de Membros (Login) */}
-          <Link to="/area-de-membros" className="btn-primary">Área de Membros</Link> 
+          <Link to="/area-de-membros" className="btn-primary text-xs lg:text-sm">Área de Membros</Link> {/* Reduzido tamanho da fonte em telas médias */}
           {/* Botão para alternar modo claro/escuro - Estilo ajustado para visibilidade */}
           <button 
             onClick={toggleDarkMode} 
-            className="p-2 rounded-full border-2 border-blue-500 dark:border-blue-400 bg-gray-50 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 transition-colors shadow-md mr-1"
+            className="p-1.5 lg:p-2 rounded-full border-2 border-blue-500 dark:border-blue-400 bg-gray-50 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 transition-colors shadow-md flex-shrink-0"
             aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
             title={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
           >
-            {darkMode ? <Sun size={20} aria-hidden="true" /> : <Moon size={20} aria-hidden="true" />}
+            {darkMode ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
           </button>
         </nav>
 

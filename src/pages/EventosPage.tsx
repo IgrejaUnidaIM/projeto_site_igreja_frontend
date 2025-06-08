@@ -45,7 +45,7 @@ const EventosPage: React.FC = () => {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
-        timeZone: 'UTC' // Considera a data como UTC para evitar problemas de fuso
+        timeZone: 'America/Sao_Paulo' // Usa o fuso horário de São Paulo para consistência
       });
     } catch (e) {
       console.error('Erro ao formatar data:', e);
@@ -57,6 +57,14 @@ const EventosPage: React.FC = () => {
   const formatTime = (dateString?: string): string => {
     if (!dateString) return '';
     try {
+      // Extrair diretamente as horas e minutos da string ISO para evitar conversão de fuso
+      const match = dateString.match(/T(\d{2}):(\d{2})/);
+      if (match && match.length >= 3) {
+        const [_, hours, minutes] = match;
+        return `${hours}:${minutes}`;
+      }
+      
+      // Fallback para o método anterior, mas sem conversão de fuso
       const date = new Date(dateString);
       if (isNaN(date.getTime())) {
         return '';
@@ -64,7 +72,7 @@ const EventosPage: React.FC = () => {
       return date.toLocaleTimeString('pt-BR', {
         hour: '2-digit',
         minute: '2-digit',
-        timeZone: 'UTC'
+        timeZone: 'America/Sao_Paulo' // Usa o fuso horário de São Paulo para garantir horário correto
       });
     } catch (e) {
       console.error('Erro ao formatar horário:', e);

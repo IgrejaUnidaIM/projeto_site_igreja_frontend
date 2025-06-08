@@ -74,7 +74,7 @@ const PastoresList: React.FC = () => {
                     height: '80px', 
                     borderRadius: '50%', 
                     objectFit: 'cover', 
-                    objectPosition: 'center 30%', // Ajustado para mostrar mais da parte superior (cabeça)
+                    objectPosition: 'center 15%', // Ajustado para mostrar mais da parte superior da cabeça
                     marginRight: '15px' 
                   }} 
                 />
