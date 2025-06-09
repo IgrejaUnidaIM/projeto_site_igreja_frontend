@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient.js';
 import { Link } from 'react-router-dom';
+import { X } from 'lucide-react';
 
 /**
  * Interface para os dados dos ministérios buscados do Sanity
@@ -10,6 +11,7 @@ interface Ministerio {
   _id: string;           // ID único do Sanity
   nome: string;          // Nome do ministério
   descricao?: string;    // Descrição do ministério e suas atividades
+  descricaoDetalhada?: any[]; // Descrição detalhada em formato PortableText
   lider?: string;        // Nome do líder do ministério
   imagemUrl?: string;    // URL da imagem representativa do ministério
 }
@@ -19,6 +21,8 @@ const MinisteriosPage: React.FC = () => {
   const [ministerios, setMinisterios] = useState<Ministerio[] | null>(null); // Inicia como null para diferenciar de array vazio
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [imagemAmpliada, setImagemAmpliada] = useState<string | null>(null);
+  const [ministerioSelecionado, setMinisterioSelecionado] = useState<Ministerio | null>(null);
 
   console.log('MinisteriosPage: Renderizando componente...');
 
@@ -41,6 +45,7 @@ const MinisteriosPage: React.FC = () => {
       _id,
       nome,
       descricao,
+      descricaoDetalhada,
       lider,
       "imagemUrl": imagem.asset->url 
     }`;
@@ -60,6 +65,26 @@ const MinisteriosPage: React.FC = () => {
         setMinisterios([]); // Define como array vazio em caso de erro
       });
   }, []);
+
+  // Função para ampliar a imagem
+  const ampliarImagem = (url: string) => {
+    setImagemAmpliada(url);
+  };
+
+  // Função para fechar a imagem ampliada
+  const fecharImagemAmpliada = () => {
+    setImagemAmpliada(null);
+  };
+
+  // Função para mostrar detalhes do ministério
+  const mostrarDetalhes = (ministerio: Ministerio) => {
+    setMinisterioSelecionado(ministerio);
+  };
+
+  // Função para fechar detalhes do ministério
+  const fecharDetalhes = () => {
+    setMinisterioSelecionado(null);
+  };
 
   console.log('MinisteriosPage: Estado atual:', { loading, error, ministerios });
 
@@ -103,12 +128,15 @@ const MinisteriosPage: React.FC = () => {
           {ministerios.map((ministerio) => (
             <div key={ministerio._id} className="bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden transition hover:shadow-lg">
               {ministerio.imagemUrl ? (
-                <img 
-                  src={ministerio.imagemUrl} 
-                  alt={`Imagem de ${ministerio.nome}`} 
-                  className="w-full h-48 object-cover"
-                  onError={(e) => { e.currentTarget.style.display = 'none'; }} // Esconde se a imagem falhar
-                />
+                <div className="relative overflow-hidden h-48">
+                  <img 
+                    src={ministerio.imagemUrl} 
+                    alt={`Imagem de ${ministerio.nome}`} 
+                    className="w-full h-full object-cover cursor-pointer transition-transform hover:scale-105"
+                    onClick={() => ampliarImagem(ministerio.imagemUrl!)}
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }} // Esconde se a imagem falhar
+                  />
+                </div>
               ) : (
                 <div className="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                   <span className="text-gray-500">Sem imagem</span>
@@ -122,6 +150,12 @@ const MinisteriosPage: React.FC = () => {
                 {ministerio.descricao && (
                   <p className="text-gray-700 dark:text-gray-300 line-clamp-3">{ministerio.descricao}</p> // Limita descrição
                 )}
+                <button 
+                  onClick={() => mostrarDetalhes(ministerio)}
+                  className="mt-4 text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  Ver mais detalhes
+                </button>
               </div>
             </div>
           ))}
@@ -135,6 +169,80 @@ const MinisteriosPage: React.FC = () => {
           Voltar para a página inicial
         </Link>
       </div>
+
+      {/* Modal para imagem ampliada */}
+      {imagemAmpliada && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4" onClick={fecharImagemAmpliada}>
+          <div className="relative max-w-4xl max-h-[90vh] w-full">
+            <button 
+              className="absolute top-2 right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow-lg"
+              onClick={(e) => {
+                e.stopPropagation();
+                fecharImagemAmpliada();
+              }}
+            >
+              <X size={24} className="text-gray-800 dark:text-white" />
+            </button>
+            <img 
+              src={imagemAmpliada} 
+              alt="Imagem ampliada" 
+              className="max-h-[90vh] max-w-full object-contain mx-auto rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Modal para detalhes do ministério */}
+      {ministerioSelecionado && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4" onClick={fecharDetalhes}>
+          <div 
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative">
+              {ministerioSelecionado.imagemUrl && (
+                <img 
+                  src={ministerioSelecionado.imagemUrl} 
+                  alt={`Imagem de ${ministerioSelecionado.nome}`} 
+                  className="w-full h-64 object-cover"
+                />
+              )}
+              <button 
+                className="absolute top-2 right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow-lg"
+                onClick={fecharDetalhes}
+              >
+                <X size={24} className="text-gray-800 dark:text-white" />
+              </button>
+            </div>
+            <div className="p-6">
+              <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">{ministerioSelecionado.nome}</h2>
+              {ministerioSelecionado.lider && (
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Líder: {ministerioSelecionado.lider}</p>
+              )}
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                {ministerioSelecionado.descricao && (
+                  <p className="text-gray-700 dark:text-gray-300 mb-4">{ministerioSelecionado.descricao}</p>
+                )}
+                {ministerioSelecionado.descricaoDetalhada && (
+                  <div className="text-gray-700 dark:text-gray-300">
+                    {/* Renderizar PortableText aqui quando implementado */}
+                    <p>Conteúdo detalhado disponível.</p>
+                  </div>
+                )}
+              </div>
+              <div className="mt-6 flex justify-end">
+                <button 
+                  onClick={fecharDetalhes}
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                >
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -148,6 +256,8 @@ const MinisteriosPage: React.FC = () => {
  * - Cards com imagem, nome, líder e descrição de cada ministério
  * - Acessibilidade (alt text para imagens)
  * - Tratamento para imagens ausentes
+ * - Ampliação de imagens ao clicar
+ * - Modal de detalhes para cada ministério
  */
 export default MinisteriosPage;
 

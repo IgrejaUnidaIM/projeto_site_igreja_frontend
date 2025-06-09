@@ -9,9 +9,12 @@ import EventosPage from './pages/EventosPage';
 import GaleriaPage from './pages/GaleriaPage';
 import ContatoPage from './pages/ContatoPage';
 import ArtigosPage from './pages/ArtigosPage'; // Nova página unificada de artigos e sermões
+import ArtigoDetalhe from './pages/ArtigoDetalhe'; // Página de detalhe para artigos
+import SermaoDetalhe from './pages/SermaoDetalhe'; // Página de detalhe para sermões
 import LoginPage from './pages/LoginPage'; // Importa a nova página de Login/Área de Membros
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import BackToTop from './components/BackToTop'; // Importa o componente de voltar ao topo
 import './App.css';
 
 function App() {
@@ -29,11 +32,14 @@ function App() {
           <Route path="/galeria" element={<GaleriaPage />} />
           <Route path="/contato" element={<ContatoPage />} />
           <Route path="/artigos" element={<ArtigosPage />} /> {/* Nova rota unificada para artigos e sermões */}
+          <Route path="/artigos/:slug" element={<ArtigoDetalhe />} /> {/* Rota dinâmica para detalhe de artigo */}
+          <Route path="/sermoes/:slug" element={<SermaoDetalhe />} /> {/* Rota dinâmica para detalhe de sermão */}
           <Route path="/area-de-membros" element={<LoginPage />} /> {/* Rota corrigida para Área de Membros */}
           <Route path="/about" element={<AboutPage />} /> {/* Rota de teste */}
         </Routes>
       </main>
       <Footer />
+      <BackToTop /> {/* Adiciona o botão de voltar ao topo em todas as páginas */}
     </div>
   );
 }

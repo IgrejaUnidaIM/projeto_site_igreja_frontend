@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient';
 import { Link } from 'react-router-dom';
+import { X } from 'lucide-react';
 
 // Define a interface para os dados dos pastores
 interface Pastor {
   _id: string;
   nome: string;
-  tipo?: string;
-  bio?: string;
+  cargo?: string;
+  atual?: boolean;
+  dataEntrada?: string;
+  dataSaida?: string;
+  biografia?: string;
   imagemUrl?: string;
 }
 
@@ -24,8 +28,11 @@ const PastoresPage: React.FC = () => {
     const query = `*[_type == "pastor"] | order(ordem asc) {
       _id,
       nome,
-      tipo,
-      bio,
+      cargo,
+      atual,
+      dataEntrada,
+      dataSaida,
+      "biografia": biografia,
       "imagemUrl": foto.asset->url
     }`;
 
@@ -40,6 +47,23 @@ const PastoresPage: React.FC = () => {
         setLoading(false);
       });
   }, []);
+
+  // Função para formatar data (DD/MM/YYYY)
+  const formatarData = (dataString?: string) => {
+    if (!dataString) return '';
+    try {
+      const data = new Date(dataString);
+      return data.toLocaleDateString('pt-BR', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric',
+        timeZone: 'UTC'
+      });
+    } catch (e) {
+      console.error('Erro ao formatar data:', e);
+      return dataString;
+    }
+  };
 
   // Função para abrir o modal com a foto ampliada
   const abrirModal = (pastor: Pastor) => {
@@ -97,11 +121,23 @@ const PastoresPage: React.FC = () => {
               )}
               <div className="p-6">
                 <h2 className="text-xl font-bold mb-2">{pastor.nome}</h2>
-                {pastor.tipo && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{pastor.tipo}</p>
+                {pastor.cargo && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{pastor.cargo}</p>
                 )}
-                {pastor.bio && (
-                  <p className="text-gray-700 dark:text-gray-300">{pastor.bio}</p>
+                {/* Exibir status atual ou período de ministério */}
+                {pastor.atual ? (
+                  <p className="text-sm text-green-600 dark:text-green-400 mb-3">
+                    {pastor.dataEntrada ? `Desde ${formatarData(pastor.dataEntrada)}` : 'Pastor atual'}
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                    {pastor.dataEntrada && pastor.dataSaida ? 
+                      `${formatarData(pastor.dataEntrada)} - ${formatarData(pastor.dataSaida)}` : 
+                      'Pastor histórico'}
+                  </p>
+                )}
+                {pastor.biografia && (
+                  <p className="text-gray-700 dark:text-gray-300">{pastor.biografia}</p>
                 )}
               </div>
             </div>
@@ -125,15 +161,25 @@ const PastoresPage: React.FC = () => {
                 className="absolute top-4 right-4 bg-white dark:bg-slate-800 rounded-full p-2 shadow-md"
                 onClick={fecharModal}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X size={24} className="text-gray-800 dark:text-white" />
               </button>
             </div>
             <div className="p-4">
               <h2 className="text-xl font-bold">{pastorSelecionado.nome}</h2>
-              {pastorSelecionado.tipo && (
-                <p className="text-sm text-gray-600 dark:text-gray-400">{pastorSelecionado.tipo}</p>
+              {pastorSelecionado.cargo && (
+                <p className="text-sm text-gray-600 dark:text-gray-400">{pastorSelecionado.cargo}</p>
+              )}
+              {/* Exibir status atual ou período de ministério no modal também */}
+              {pastorSelecionado.atual ? (
+                <p className="text-sm text-green-600 dark:text-green-400 mt-2">
+                  {pastorSelecionado.dataEntrada ? `Desde ${formatarData(pastorSelecionado.dataEntrada)}` : 'Pastor atual'}
+                </p>
+              ) : (
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                  {pastorSelecionado.dataEntrada && pastorSelecionado.dataSaida ? 
+                    `${formatarData(pastorSelecionado.dataEntrada)} - ${formatarData(pastorSelecionado.dataSaida)}` : 
+                    'Pastor histórico'}
+                </p>
               )}
             </div>
           </div>

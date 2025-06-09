@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient.js';
-import { Image as ImageIcon, Video as VideoIcon, AlertCircle, Loader } from 'lucide-react';
+import { Image as ImageIcon, Video as VideoIcon, AlertCircle, Loader, X } from 'lucide-react';
 
 /**
  * Interface para os itens da galeria vindos do Sanity
@@ -20,6 +20,8 @@ const GaleriaPage: React.FC = () => {
   const [itens, setItens] = useState<GaleriaItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [imagemAmpliada, setImagemAmpliada] = useState<string | null>(null);
+  const [itemSelecionado, setItemSelecionado] = useState<GaleriaItem | null>(null);
 
   useEffect(() => {
     /**
@@ -28,13 +30,13 @@ const GaleriaPage: React.FC = () => {
      * - Busca ID, título, descrição, tipo de mídia, URL da imagem e URL do vídeo
      * - Ajuste os nomes dos campos (tipoMidia, videoUrl) conforme configurado no seu Sanity
      */
-    const query = `*[_type == "galeriaItem"] | order(_createdAt desc) {
+    const query = `*[_type in ["galeriaImagem", "galeriaVideo"]] | order(_createdAt desc) {
       _id,
       titulo,
       descricao,
-      tipoMidia, // Campo para identificar o tipo
-      "imagemUrl": imagem.asset->url, // Busca URL da imagem se for imagem
-      videoUrl // Busca URL do vídeo se for vídeo (ajuste o nome do campo)
+      "tipoMidia": _type == "galeriaImagem" ? "imagem" : "video",
+      "imagemUrl": imagem.asset->url,
+      "videoUrl": videoUrl
     }`;
 
     console.log('GaleriaPage: Iniciando busca de dados...');
@@ -53,6 +55,26 @@ const GaleriaPage: React.FC = () => {
         setLoading(false);
       });
   }, []);
+
+  // Função para ampliar a imagem
+  const ampliarImagem = (url: string) => {
+    setImagemAmpliada(url);
+  };
+
+  // Função para fechar a imagem ampliada
+  const fecharImagemAmpliada = () => {
+    setImagemAmpliada(null);
+  };
+
+  // Função para mostrar detalhes do item
+  const mostrarDetalhes = (item: GaleriaItem) => {
+    setItemSelecionado(item);
+  };
+
+  // Função para fechar detalhes do item
+  const fecharDetalhes = () => {
+    setItemSelecionado(null);
+  };
 
   // Função auxiliar para extrair ID de vídeo do YouTube
   const getYouTubeId = (url: string): string | null => {
@@ -119,8 +141,9 @@ const GaleriaPage: React.FC = () => {
                   <img 
                     src={item.imagemUrl} 
                     alt={item.titulo || 'Imagem da Galeria'} 
-                    className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105 group-focus:scale-105"
+                    className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105 group-focus:scale-105 cursor-pointer"
                     loading="lazy"
+                    onClick={() => ampliarImagem(item.imagemUrl!)}
                   />
                 )}
                 {isVideo && youtubeId && (
@@ -153,11 +176,106 @@ const GaleriaPage: React.FC = () => {
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent p-4 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300">
                     {item.titulo && <h3 className="text-white font-bold text-lg mb-1 truncate">{item.titulo}</h3>}
                     {item.descricao && <p className="text-gray-200 text-sm line-clamp-2">{item.descricao}</p>}
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        mostrarDetalhes(item);
+                      }}
+                      className="mt-2 text-blue-400 hover:text-blue-300 text-sm"
+                    >
+                      Ver detalhes
+                    </button>
                   </div>
                 )}
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Modal para imagem ampliada */}
+      {imagemAmpliada && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4" onClick={fecharImagemAmpliada}>
+          <div className="relative max-w-4xl max-h-[90vh] w-full">
+            <button 
+              className="absolute top-2 right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow-lg"
+              onClick={(e) => {
+                e.stopPropagation();
+                fecharImagemAmpliada();
+              }}
+            >
+              <X size={24} className="text-gray-800 dark:text-white" />
+            </button>
+            <img 
+              src={imagemAmpliada} 
+              alt="Imagem ampliada" 
+              className="max-h-[90vh] max-w-full object-contain mx-auto rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Modal para detalhes do item */}
+      {itemSelecionado && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4" onClick={fecharDetalhes}>
+          <div 
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative">
+              {itemSelecionado.tipoMidia === 'imagem' && itemSelecionado.imagemUrl && (
+                <img 
+                  src={itemSelecionado.imagemUrl} 
+                  alt={itemSelecionado.titulo || 'Imagem da Galeria'} 
+                  className="w-full h-64 object-cover"
+                />
+              )}
+              {itemSelecionado.tipoMidia === 'video' && itemSelecionado.videoUrl && (
+                <div className="w-full h-64">
+                  {getYouTubeId(itemSelecionado.videoUrl) ? (
+                    <iframe
+                      className="w-full h-full"
+                      src={`https://www.youtube.com/embed/${getYouTubeId(itemSelecionado.videoUrl)}`}
+                      title={itemSelecionado.titulo || "Vídeo do YouTube"}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  ) : (
+                    <video 
+                      controls 
+                      className="w-full h-full object-cover"
+                      preload="metadata"
+                    >
+                      <source src={itemSelecionado.videoUrl} type="video/mp4" />
+                      Seu navegador não suporta o elemento de vídeo.
+                    </video>
+                  )}
+                </div>
+              )}
+              <button 
+                className="absolute top-2 right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow-lg"
+                onClick={fecharDetalhes}
+              >
+                <X size={24} className="text-gray-800 dark:text-white" />
+              </button>
+            </div>
+            <div className="p-6">
+              <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">{itemSelecionado.titulo || (itemSelecionado.tipoMidia === 'video' ? 'Vídeo' : 'Imagem')}</h2>
+              {itemSelecionado.descricao && (
+                <p className="text-gray-700 dark:text-gray-300 mb-4">{itemSelecionado.descricao}</p>
+              )}
+              <div className="mt-6 flex justify-end">
+                <button 
+                  onClick={fecharDetalhes}
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                >
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -173,5 +291,7 @@ const GaleriaPage: React.FC = () => {
  * - Acessibilidade
  * - Estados de carregamento, erro e galeria vazia
  * - Efeito de hover/focus para mostrar detalhes
+ * - Ampliação de imagens ao clicar
+ * - Modal de detalhes para cada item
  */
 export default GaleriaPage;

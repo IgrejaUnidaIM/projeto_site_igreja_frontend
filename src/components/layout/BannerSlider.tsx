@@ -30,15 +30,16 @@ const BannerSlider: React.FC = () => {
   useEffect(() => {
     /**
      * Query para buscar banners do Sanity
-     * - Ordenados por data de criação ou um campo de ordem, se existir
+     * - Ordenados pelo campo 'ordem' (menor número primeiro)
      * - Busca ID, título, descrição, link e URL da imagem
      * - Ajuste o nome do schema ('banner') e dos campos conforme configurado no seu Sanity
      */
-    const queryBanners = `*[_type == "banner"] | order(_createdAt desc) {
+    const queryBanners = `*[_type == "banner"] | order(ordem asc) {
       _id,
       titulo,
       descricao,
       link,
+      ordem,
       "imagemUrl": imagem.asset->url
     }`;
 
@@ -97,12 +98,12 @@ const BannerSlider: React.FC = () => {
       {banners.map((banner) => (
         <SwiperSlide key={banner._id}>
           {banner.link ? (
-            <Link to={banner.link} target="_blank" rel="noopener noreferrer" className="block relative w-full h-64 md:h-96" aria-label={banner.titulo || 'Banner'}>
+            <Link to={banner.link.startsWith('http') ? banner.link : banner.link} className="block relative w-full h-64 md:h-96" aria-label={banner.titulo || 'Banner'}>
               {banner.imagemUrl ? (
                 <img 
                   src={banner.imagemUrl} 
                   alt={banner.titulo || 'Banner'} 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               ) : (
                 <div className="w-full h-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-500">

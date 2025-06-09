@@ -59,7 +59,7 @@ const HomePage: React.FC = () => {
     const hoje = new Date();
     const mesAtual = hoje.getMonth() + 1; // getMonth() é 0-indexado
     const mesAtualString = mesAtual.toString().padStart(2, '0'); 
-    const queryAniversariantes = `*[_type == "aniversariante" && string(dataNascimento)[5..7] == $mesAtual] | order(string(dataNascimento)[8..10] asc) {
+    const queryAniversariantes = `*[_type == "membro" && string(dataNascimento)[5..7] == $mesAtual] | order(string(dataNascimento)[8..10] asc) {
       _id,
       nome,
       dataNascimento
