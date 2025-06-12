@@ -11,7 +11,7 @@ interface Ministerio {
   _id: string;           // ID único do Sanity
   nome: string;          // Nome do ministério
   descricao?: string;    // Descrição do ministério e suas atividades
-  descricaoDetalhada?: any[]; // Descrição detalhada em formato PortableText
+  conteudo?: any[];      // Conteúdo detalhado em formato PortableText
   lider?: string;        // Nome do líder do ministério
   imagemUrl?: string;    // URL da imagem representativa do ministério
 }
@@ -45,9 +45,9 @@ const MinisteriosPage: React.FC = () => {
       _id,
       nome,
       descricao,
-      descricaoDetalhada,
+      conteudo,
       lider,
-      "imagemUrl": imagem.asset->url 
+      "imagemUrl": imagem_destaque.asset->url 
     }`;
 
     console.log('MinisteriosPage: Executando query:', query);
@@ -134,7 +134,7 @@ const MinisteriosPage: React.FC = () => {
                     alt={`Imagem de ${ministerio.nome}`} 
                     className="w-full h-full object-cover cursor-pointer transition-transform hover:scale-105"
                     onClick={() => ampliarImagem(ministerio.imagemUrl!)}
-                    onError={(e) => { e.currentTarget.style.display = 'none'; }} // Esconde se a imagem falhar
+                    loading="lazy"
                   />
                 </div>
               ) : (
@@ -224,10 +224,22 @@ const MinisteriosPage: React.FC = () => {
                 {ministerioSelecionado.descricao && (
                   <p className="text-gray-700 dark:text-gray-300 mb-4">{ministerioSelecionado.descricao}</p>
                 )}
-                {ministerioSelecionado.descricaoDetalhada && (
+                {ministerioSelecionado.conteudo && (
                   <div className="text-gray-700 dark:text-gray-300">
-                    {/* Renderizar PortableText aqui quando implementado */}
-                    <p>Conteúdo detalhado disponível.</p>
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      {typeof ministerioSelecionado.conteudo === 'string' 
+                        ? ministerioSelecionado.conteudo 
+                        : Array.isArray(ministerioSelecionado.conteudo) 
+                          ? ministerioSelecionado.conteudo.map((block, i) => (
+                              <div key={i} className="mb-4">
+                                {block.children && block.children.map((child, j) => (
+                                  <p key={j}>{child.text}</p>
+                                ))}
+                              </div>
+                            ))
+                          : 'Conteúdo detalhado disponível.'
+                      }
+                    </div>
                   </div>
                 )}
               </div>

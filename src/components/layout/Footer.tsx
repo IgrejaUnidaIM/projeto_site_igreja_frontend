@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'; // Importa hooks do React
 import { Link } from 'react-router-dom'; // Importa Link para navegação interna
 import { Heart, Facebook, Instagram, Youtube } from 'lucide-react'; // Importa ícones
 import sanityClient from '../../sanityClient.js'; // Importa o cliente Sanity (ajuste o caminho se necessário)
-import logo from '../../assets/images/logo.png'; // Importa o logo
+import logoImg from '../../assets/images/logo.png';
 
 // Interface para os dados de configuração buscados do Sanity
 interface ConfiguracoesGerais {
@@ -101,7 +101,7 @@ const Footer: React.FC = () => {
           <div className="flex flex-col items-center md:items-start">
             <div className="w-24 h-24 mb-4">
               <img 
-                src={logo} 
+                src={logoImg} 
                 alt="Logotipo da 1ª Igreja Unida de Inácio Monteiro" // Alt text descritivo
                 className="w-full h-full object-contain"
               />
@@ -120,13 +120,14 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               {/* Links internos usando React Router */}
               <li><Link to="/" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Início</Link></li>
-              <li><Link to="/nossa-historia" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Nossa História</Link></li>
+              <li><Link to="/historia" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Nossa História</Link></li>
               <li><Link to="/pastores" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Pastores</Link></li>
               <li><Link to="/ministerios" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Ministérios</Link></li>
               <li><Link to="/galeria" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Galeria</Link></li>
-              <li><Link to="/lives-podcasts" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Lives & Podcasts</Link></li>
               <li><Link to="/contato" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Contato</Link></li>
             </ul>
+          </nav>
+          
           {/* Coluna 3: Horários de Culto */}
           <section aria-labelledby="footer-horarios">
             <h4 id="footer-horarios" className="text-lg font-bold mb-4 border-b border-blue-700 dark:border-blue-800 pb-2">

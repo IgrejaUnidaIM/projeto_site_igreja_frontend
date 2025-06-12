@@ -1,4 +1,4 @@
-import LivesPodcastsSection from '../components/HomePage/LivesPodcastsSection';
+
 import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient.js';
 import { Link } from 'react-router-dom';
@@ -59,7 +59,7 @@ const HomePage: React.FC = () => {
     const hoje = new Date();
     const mesAtual = hoje.getMonth() + 1; // getMonth() é 0-indexado
     const mesAtualString = mesAtual.toString().padStart(2, '0'); 
-    const queryAniversariantes = `*[_type == "membro" && string(dataNascimento)[5..7] == $mesAtual] | order(string(dataNascimento)[8..10] asc) {
+    const queryAniversariantes = `*[_type == "membro" && defined(dataNascimento)] | order(dataNascimento asc) {
       _id,
       nome,
       dataNascimento
@@ -69,10 +69,25 @@ const HomePage: React.FC = () => {
     setLoadingAniversariantes(true);
     setErrorAniversariantes(null);
 
-    sanityClient.fetch<Aniversariante[]>(queryAniversariantes, { mesAtual: mesAtualString })
+    sanityClient.fetch<Aniversariante[]>(queryAniversariantes)
       .then((data) => {
-        console.log('HomePage: Aniversariantes recebidos:', data);
-        setAniversariantes(data || []);
+        console.log('HomePage: Todos os membros recebidos:', data);
+        // Filtrar aniversariantes do mês atual no frontend
+        const aniversariantesDoMes = data?.filter(membro => {
+          if (!membro.dataNascimento) return false;
+          const mesNascimento = membro.dataNascimento.substring(5, 7);
+          return mesNascimento === mesAtualString;
+        }) || [];
+        
+        // Ordenar por dia do mês (do menor para o maior)
+        aniversariantesDoMes.sort((a, b) => {
+          const diaA = parseInt(a.dataNascimento?.substring(8, 10) || '0');
+          const diaB = parseInt(b.dataNascimento?.substring(8, 10) || '0');
+          return diaA - diaB;
+        });
+        
+        console.log('HomePage: Aniversariantes do mês filtrados e ordenados:', aniversariantesDoMes);
+        setAniversariantes(aniversariantesDoMes);
         setLoadingAniversariantes(false);
       })
       .catch((err) => {
@@ -119,7 +134,7 @@ const HomePage: React.FC = () => {
       titulo,
       data,
       local,
-      "imagemUrl": imagem.asset->url
+      "imagemUrl": imagem_destaque.asset->url
     }`;
 
     console.log('HomePage: Buscando eventos em destaque...');
@@ -234,15 +249,11 @@ const HomePage: React.FC = () => {
         )}
       </section>
 
-      {/* NOVA SEÇÃO: Lives e Podcasts */}
-      <LivesPodcastsSection />
-
       {/* Grid para Aniversariantes e Artigos */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
-      
         
-        {/* Coluna Aniversariantes */}
-        <div className="lg:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+        {/* Coluna Aniversariantes - Altura dinâmica sem rolagem */}
+        <div className="lg:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md" style={{height: 'fit-content'}}>
           <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-white flex items-center">
             <Gift className="mr-3 text-pink-500" size={28} />
             Aniversariantes do Mês
@@ -262,14 +273,18 @@ const HomePage: React.FC = () => {
             <p className="text-gray-500 dark:text-gray-400 text-sm">Nenhum aniversariante este mês.</p>
           )}
           {!loadingAniversariantes && !errorAniversariantes && aniversariantes.length > 0 && (
-            <ul className="space-y-2">
-              {aniversariantes.map((aniversariante) => (
-                <li key={aniversariante._id} className="flex justify-between items-center text-gray-700 dark:text-gray-300 text-sm border-b border-gray-200 dark:border-gray-700 pb-1">
-                  <span>{aniversariante.nome || 'Nome não informado'}</span>
-                  <span className="font-medium text-blue-600 dark:text-blue-400">Dia {formatDiaAniversario(aniversariante.dataNascimento)}</span>
-                </li>
-              ))}
-            </ul>
+            <div>
+              <ul className="space-y-3">
+                {aniversariantes.map((aniversariante) => (
+                  <li key={aniversariante._id} className="flex justify-between items-center text-gray-700 dark:text-gray-300 text-sm border-b border-gray-200 dark:border-gray-700 pb-2 mb-2">
+                    <span className="font-medium">{aniversariante.nome || 'Nome não informado'}</span>
+                    <span className="font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded-full text-xs">
+                      Dia {formatDiaAniversario(aniversariante.dataNascimento)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
 

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Sun, Moon, Menu, X } from 'lucide-react';
-import logo from '../../assets/images/logo.png'; // Importa o logo
+import logoImg from '../../assets/images/logo.png';
 
 // Componente Header: Cabeçalho principal do site
 const Header = () => {
@@ -79,18 +79,17 @@ const Header = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
- // Define os links de navegação (todas são páginas separadas agora)
-const navLinks = [
-  { to: "/", text: "Início" },
-  { to: "/nossa-historia", text: "Nossa História" },
-  { to: "/pastores", text: "Pastores" },
-  { to: "/ministerios", text: "Ministérios" },
-  { to: "/eventos", text: "Eventos" },
-  { to: "/galeria", text: "Galeria" },
-  { to: "/artigos", text: "Artigos e Sermões" },
-  { to: "/lives-podcasts", text: "Lives & Podcasts" }, // NOVO ITEM ADICIONADO
-  { to: "/contato", text: "Contato" },
-];
+  // Define os links de navegação (todas são páginas separadas agora)
+  const navLinks = [
+    { to: "/", text: "Início" },
+    { to: "/nossa-historia", text: "Nossa História" }, // Rota corrigida para nossa-historia
+    { to: "/pastores", text: "Pastores" },
+    { to: "/ministerios", text: "Ministérios" },
+    { to: "/eventos", text: "Eventos" }, // Rota para página
+    { to: "/galeria", text: "Galeria" }, // Rota para página
+    { to: "/artigos", text: "Artigos e Sermões" }, // Rota unificada para artigos e sermões
+    { to: "/contato", text: "Contato" }, // Rota para página
+  ];
 
   return (
     // Tag header com classes dinâmicas para estilo baseado na rolagem
@@ -108,7 +107,7 @@ const navLinks = [
           <Link to="/" className="flex items-center" aria-label="Página Inicial">
             <div className="relative w-10 h-10 md:w-16 md:h-16 overflow-hidden flex-shrink-0"> {/* Reduzido tamanho no mobile */}
               <img 
-                src={logo} 
+                src={logoImg} 
                 alt="Logotipo da 1ª Igreja Unida de Inácio Monteiro" // Alt text mais descritivo
                 className="w-full h-full object-contain transition-transform hover:scale-110 duration-300"
               />
@@ -133,22 +132,22 @@ const navLinks = [
         </div>
 
         {/* Navegação Desktop */}
-        <nav className="hidden md:flex items-center space-x-4 lg:space-x-6" aria-label="Navegação Principal"> {/* Reduzido espaçamento em telas médias */}
+        <nav className="hidden md:flex items-center space-x-2 lg:space-x-4" aria-label="Navegação Principal"> {/* Reduzido espaçamento ainda mais */}
           {navLinks.map((link) => (
-            <Link key={link.to} to={link.to} className="nav-link">
+            <Link key={link.to} to={link.to} className="nav-link text-xs lg:text-sm"> {/* Reduzido tamanho da fonte */}
               {link.text}
             </Link>
           ))}
-          {/* Link para Área de Membros (Login) */}
-          <Link to="/area-de-membros" className="btn-primary text-xs lg:text-sm">Área de Membros</Link> {/* Reduzido tamanho da fonte em telas médias */}
+          {/* Link para Área Administrativa (Login) */}
+          <Link to="/area-administrativa" className="btn-primary text-xs lg:text-sm px-2 py-1">Área Administrativa</Link> {/* Reduzido padding */}
           {/* Botão para alternar modo claro/escuro - Estilo ajustado para visibilidade */}
           <button 
             onClick={toggleDarkMode} 
-            className="p-1.5 lg:p-2 rounded-full border-2 border-blue-500 dark:border-blue-400 bg-gray-50 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 transition-colors shadow-md flex-shrink-0"
+            className="p-1 lg:p-1.5 rounded-full border-2 border-blue-500 dark:border-blue-400 bg-gray-50 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 transition-colors shadow-md flex-shrink-0 mr-2" 
             aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
             title={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
           >
-            {darkMode ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
+            {darkMode ? <Sun size={16} aria-hidden="true" /> : <Moon size={16} aria-hidden="true" />} {/* Reduzido tamanho do ícone */}
           </button>
         </nav>
 
@@ -189,14 +188,14 @@ const navLinks = [
               {link.text}
             </Link>
           ))}
-          {/* Link Área de Membros Mobile */}
+          {/* Link Área Administrativa Mobile */}
           <Link 
-            to="/area-de-membros" 
+            to="/area-administrativa" 
             className="btn-primary-mobile" // Estilo definido em index.css
             tabIndex={isMenuOpen ? 0 : -1} // Controla foco
             onClick={() => setIsMenuOpen(false)} // Fecha o menu ao clicar
           >
-            Área de Membros
+            Área Administrativa
           </Link> 
         </div>
       </nav>

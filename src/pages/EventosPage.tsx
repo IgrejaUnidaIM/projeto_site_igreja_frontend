@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient.js';
 import { PortableText } from '@portabletext/react'; // Importa o componente PortableText
-import { Calendar, MapPin, Image as ImageIcon, Loader, AlertCircle } from 'lucide-react';
+import { Calendar, MapPin, Image as ImageIcon, Loader, AlertCircle, X } from 'lucide-react';
 
 /**
  * Interface para definir a estrutura de um objeto Evento vindo do Sanity
@@ -25,6 +25,18 @@ const EventosPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   // Estado para armazenar mensagens de erro
   const [error, setError] = useState<string | null>(null);
+  // Estado para controlar a imagem ampliada
+  const [imagemAmpliada, setImagemAmpliada] = useState<string | null>(null);
+
+  // Função para ampliar a imagem
+  const ampliarImagem = (url: string) => {
+    setImagemAmpliada(url);
+  };
+
+  // Função para fechar a imagem ampliada
+  const fecharImagemAmpliada = () => {
+    setImagemAmpliada(null);
+  };
 
   // Função para formatar a data e hora para o padrão brasileiro
   const formatDate = (dateString?: string): string => {
@@ -190,8 +202,9 @@ const EventosPage: React.FC = () => {
                   <img 
                     src={evento.imagem_destaque} 
                     alt={`Imagem do evento: ${evento.titulo || 'Evento sem título'}`} // Alt text descritivo
-                    className="w-full h-full object-cover" // Garante que a imagem cubra a área
+                    className="w-full h-full object-cover cursor-pointer transition-transform hover:scale-105" // Garante que a imagem cubra a área
                     loading="lazy" // Carregamento preguiçoso para imagens
+                    onClick={() => ampliarImagem(evento.imagem_destaque!)}
                   />
                  ) : (
                   // Placeholder se não houver imagem
@@ -251,6 +264,29 @@ const EventosPage: React.FC = () => {
               </div>
             </article>
           ))}
+        </div>
+      )}
+
+      {/* Modal para imagem ampliada */}
+      {imagemAmpliada && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4" onClick={fecharImagemAmpliada}>
+          <div className="relative max-w-4xl max-h-[90vh] w-full">
+            <button 
+              className="absolute top-2 right-2 bg-white dark:bg-gray-800 rounded-full p-1 shadow-lg"
+              onClick={(e) => {
+                e.stopPropagation();
+                fecharImagemAmpliada();
+              }}
+            >
+              <X size={24} className="text-gray-800 dark:text-white" />
+            </button>
+            <img 
+              src={imagemAmpliada} 
+              alt="Imagem ampliada do evento" 
+              className="max-h-[90vh] max-w-full object-contain mx-auto rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
         </div>
       )}
     </div>
