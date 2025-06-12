@@ -79,17 +79,18 @@ const Header = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Define os links de navegação (todas são páginas separadas agora)
-  const navLinks = [
-    { to: "/", text: "Início" },
-    { to: "/nossa-historia", text: "Nossa História" }, // Rota corrigida para nossa-historia
-    { to: "/pastores", text: "Pastores" },
-    { to: "/ministerios", text: "Ministérios" },
-    { to: "/eventos", text: "Eventos" }, // Rota para página
-    { to: "/galeria", text: "Galeria" }, // Rota para página
-    { to: "/artigos", text: "Artigos e Sermões" }, // Rota unificada para artigos e sermões
-    { to: "/contato", text: "Contato" }, // Rota para página
-  ];
+ // Define os links de navegação (todas são páginas separadas agora)
+const navLinks = [
+  { to: "/", text: "Início" },
+  { to: "/nossa-historia", text: "Nossa História" },
+  { to: "/pastores", text: "Pastores" },
+  { to: "/ministerios", text: "Ministérios" },
+  { to: "/eventos", text: "Eventos" },
+  { to: "/galeria", text: "Galeria" },
+  { to: "/artigos", text: "Artigos e Sermões" },
+  { to: "/lives-podcasts", text: "Lives & Podcasts" }, // NOVO ITEM ADICIONADO
+  { to: "/contato", text: "Contato" },
+];
 
   return (
     // Tag header com classes dinâmicas para estilo baseado na rolagem
