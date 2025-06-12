@@ -1,4 +1,4 @@
-
+import LivesPodcastsSection from '../components/HomePage/LivesPodcastsSection';
 import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient.js';
 import { Link } from 'react-router-dom';
@@ -234,8 +234,12 @@ const HomePage: React.FC = () => {
         )}
       </section>
 
+      {/* NOVA SEÇÃO: Lives e Podcasts */}
+      <LivesPodcastsSection />
+
       {/* Grid para Aniversariantes e Artigos */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
+      
         
         {/* Coluna Aniversariantes */}
         <div className="lg:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
