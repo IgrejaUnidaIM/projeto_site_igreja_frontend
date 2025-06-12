@@ -120,7 +120,7 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               {/* Links internos usando React Router */}
               <li><Link to="/" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Início</Link></li>
-              <li><Link to="/historia" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Nossa História</Link></li>
+              <li><Link to="/nossa-historia" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Nossa História</Link></li>
               <li><Link to="/pastores" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Pastores</Link></li>
               <li><Link to="/ministerios" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Ministérios</Link></li>
               <li><Link to="/galeria" className="text-blue-200 dark:text-blue-300 hover:text-white transition-colors">Galeria</Link></li>
