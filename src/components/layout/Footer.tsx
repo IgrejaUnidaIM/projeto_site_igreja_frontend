@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'; // Importa hooks do React
 import { Link } from 'react-router-dom'; // Importa Link para navegação interna
 import { Heart, Facebook, Instagram, Youtube } from 'lucide-react'; // Importa ícones
-import sanityClient from '../../../src/sanityClient.js'; // Caminho corrigido para o cliente Sanity
+import sanityClient from '../../sanityClient.js'; // Caminho corrigido para o cliente Sanity
 import logoImg from '/logo.png'; // Usando o logo da pasta public
 
 // Interface para os dados de configuração buscados do Sanity
