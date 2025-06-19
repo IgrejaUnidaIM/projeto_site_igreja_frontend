@@ -1,7 +1,5 @@
 // src/sanityClient.d.ts
-declare module '../sanityClient' {
-  import { SanityClient } from '@sanity/client'; // Se você estiver usando @sanity/client, importe o tipo correto
+import { SanityClient } from '@sanity/client';
 
-  const client: SanityClient; // Substitua 'SanityClient' pelo tipo real do seu cliente Sanity
-  export default client;
-}
+declare const client: SanityClient;
+export default client;
