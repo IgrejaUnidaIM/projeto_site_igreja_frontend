@@ -115,7 +115,7 @@ const PastoresPage: React.FC = () => {
                   <img 
                     src={pastor.imagemUrl} 
                     alt={`Foto de ${pastor.nome}`} 
-                    className="w-full h-64 object-cover object-center hover:opacity-90 transition" // Adicionado object-center
+                    className="w-full h-65 object-cover object-center hover:opacity-90 transition modal-image-fullscreen "
                   />
                 </div>
               )}

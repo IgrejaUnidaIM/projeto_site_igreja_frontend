@@ -1,0 +1,29 @@
+/* Este arquivo será copiado diretamente para a raiz do build */
+header, .header {
+  background-color: #1a365d !important;
+  color: white !important;
+  padding: 1rem 0 !important;
+}
+
+footer, .footer {
+  background-color: #1a365d !important;
+  color: white !important;
+  padding: 2rem 0 1rem !important;
+}
+
+.dark header, .dark .header {
+  background-color: #1a202c !important;
+}
+
+.dark footer, .dark .footer {
+  background-color: #1a202c !important;
+}
+
+/* Outras sobrescritas necessárias */
+.bg-blue-950 {
+  background-color: #1a365d !important;
+}
+
+.dark .bg-slate-900 {
+  background-color: #0f172a !important;
+}

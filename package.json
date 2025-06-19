@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx vite build",
-    "lint": "eslint .",
+    "build": "tsc && vite build && node fix-footer.js",
     "preview": "vite preview"
   },
   "dependencies": {

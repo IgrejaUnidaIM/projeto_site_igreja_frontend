@@ -109,7 +109,7 @@ const NossaHistoriaPage: React.FC = () => {
 
       {/* Seção: Cremos */}
       <section className="mb-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h2 className="text-3xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Em que Cremos</h2>
+        <h2 className="text-3xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Cremos</h2>
         <ol className="list-alpha list-inside space-y-3 text-gray-700 dark:text-gray-300">
           <li>Em Deus, criador e sustentador de todas as coisas, imanente no Universo e do mesmo transcendente, e Criador de todos os homens, fonte de vida, de toda beleza e bondade, de toda verdade e amor.</li>
           <li>Em Jesus Cristo, Deus manifesto na carne, nosso guia e exemplo de santidade, humildade e amor, redentor e salvador do mundo.</li>

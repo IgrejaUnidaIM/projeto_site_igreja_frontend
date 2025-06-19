@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient.js';
 import { Link } from 'react-router-dom';
 import { Gift, BookOpen, Loader, AlertCircle, Calendar, Star } from 'lucide-react'; // Adicionado Calendar e Star
-import BannerSlider from '../components/layout/BannerSlider'; // Importa o componente de banner
+import BannerSlider from '../components/BannerSlider'; // Importa o componente de banner
 
 /**
  * Interface para os dados de aniversariantes buscados do Sanity

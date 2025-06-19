@@ -1,0 +1,70 @@
+/* Sobrescrever estilos conflitantes da pasta assets */
+
+/* Restaurar estilos do Header */
+header, .header {
+  background-color: #1a365d !important;
+  color: white !important;
+  padding: 1rem 0 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Restaurar estilos do Footer */
+footer, .footer {
+  background-color: #1a365d !important;
+  color: white !important;
+  padding: 2rem 0 1rem !important;
+}
+
+/* Restaurar links no header e footer */
+header a, footer a {
+  color: #e2e8f0 !important;
+}
+
+header a:hover, footer a:hover {
+  color: white !important;
+  text-decoration: none !important;
+}
+
+/* Restaurar modo escuro */
+.dark header, .dark .header {
+  background-color: #1a202c !important;
+}
+
+.dark footer, .dark .footer {
+  background-color: #1a202c !important;
+}
+
+/* Restaurar classes específicas do Tailwind */
+.bg-blue-950 {
+  background-color: #1a365d !important;
+}
+
+.dark .bg-slate-900 {
+  background-color: #0f172a !important;
+}
+
+.text-blue-200 {
+  color: #bee3f8 !important;
+}
+
+.dark .text-blue-300 {
+  color: #90cdf4 !important;
+}
+
+/* Garantir que o botão de tema funcione */
+.theme-toggle {
+  background-color: #4a5568 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s !important;
+}
+
+.theme-toggle:hover {
+  background-color: #2d3748 !important;
+}

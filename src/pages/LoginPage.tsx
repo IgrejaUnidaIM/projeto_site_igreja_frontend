@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 const LoginPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-8 text-center">Área de Membros</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center">Área Administrativa do Site</h1>
       
       {/* Conteúdo da página será adicionado aqui */}
       <p className="text-center text-xl text-gray-500 mb-8">
-        Formulário de login e conteúdo restrito em breve...
+         Em breve será implementada uma área restrita no Site...
       </p>
 
       <div className="mt-12 text-center">
