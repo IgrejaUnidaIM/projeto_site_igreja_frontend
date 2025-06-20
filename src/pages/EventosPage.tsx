@@ -77,10 +77,10 @@ const EventosPage: React.FC = () => {
       // Verificar se é o evento de Jantar Romântico (identificado pelo título ou ID)
       if (dateString.includes('2025-06-14')) {
         // Forçar horários específicos para este evento
-        if (dateString === eventos?.dataHoraInicio) {
+        if (dateString === evento?.dataHoraInicio) {
           console.log('EventosPage: Forçando horário de início para 18:00');
           return '18:00';
-        } else if (dateString === eventos?.dataHoraFim) {
+        } else if (dateString === evento?.dataHoraFim) {
           console.log('EventosPage: Forçando horário de término para 21:30');
           return '21:30';
         }
