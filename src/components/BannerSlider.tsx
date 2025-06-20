@@ -6,10 +6,10 @@ import { Link } from 'react-router-dom';
 import { Loader, AlertCircle, Image as ImageIcon } from 'lucide-react';
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/autoplay';
+import 'swiper/modules';
+import 'swiper/modules/navigation';
+import 'swiper/modules/pagination';
+import 'swiper/modules/autoplay';
 
 /**
  * Interface para os dados de banners buscados do Sanity
