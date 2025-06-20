@@ -1,6 +1,6 @@
 // src/components/HomePage/LivesPodcastsSection.tsx
 import React from 'react';
-import LivesPodcasts from '../LivesPodcasts';
+import LivesPodcasts from '../components/LivesPodcasts';
 import { ArrowRight, Headphones, Video } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
