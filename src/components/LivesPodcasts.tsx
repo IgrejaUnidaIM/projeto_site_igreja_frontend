@@ -1,7 +1,5 @@
 // src/components/LivesPodcasts.tsx
 import React, { useState, useEffect } from 'react';
-import { client } from '../sanity';
-import { urlFor } from '../sanity';
 import { Play, Calendar, Clock, ExternalLink, Filter } from 'lucide-react';
 
 // Interface para tipagem dos dados

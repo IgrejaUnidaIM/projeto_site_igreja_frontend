@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import sanityClient from '../sanityClient.js';
 import { Link } from 'react-router-dom';
 import { PortableText } from '@portabletext/react';
-import { BookText, BookOpen, User, Calendar, Loader, AlertCircle, Filter } from 'lucide-react';
+import { BookText, BookOpen, User, Loader, AlertCircle, Filter } from 'lucide-react';
 
 /**
  * Interface para os dados de artigos buscados do Sanity
