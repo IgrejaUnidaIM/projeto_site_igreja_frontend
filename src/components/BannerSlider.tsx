@@ -7,9 +7,9 @@ import { Loader, AlertCircle, Image as ImageIcon } from 'lucide-react';
 
 // Import Swiper styles
 import 'swiper/modules';
-import 'swiper/modules/navigation';
-import 'swiper/modules/pagination';
-import 'swiper/modules/autoplay';
+import 'swiper/modules/navigation.css';
+import 'swiper/modules/pagination.css';
+import 'swiper/modules/autoplay.css';
 
 /**
  * Interface para os dados de banners buscados do Sanity
