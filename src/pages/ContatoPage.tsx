@@ -19,12 +19,7 @@ const ContatoPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
+  // Removido formData e setFormData pois não estavam sendo utilizados
 
   useEffect(() => {
     /**
@@ -48,38 +43,20 @@ const ContatoPage: React.FC = () => {
     sanityClient.fetch<ContatoInfo>(query)
       .then((data) => {
         console.log("ContatoPage: Dados de contato recebidos:", data);
-        // Log específico para telefone e email
-        console.log("ContatoPage: Telefone recebido:", data?.telefone);
-        console.log("ContatoPage: Email recebido:", data?.email);
+        // Os campos 'telefone' e 'email' não existem na interface ContatoInfo, use telefonePrincipal e emailContato
+        console.log("ContatoPage: Telefone recebido:", data?.telefonePrincipal);
+        console.log("ContatoPage: Email recebido:", data?.emailContato);
         setContatoInfo(data);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch((err: any) => { // Adicionado tipagem 'any' para 'err'
         console.error('ContatoPage: Erro ao buscar informações de contato:', err);
         setError('Falha ao carregar as informações de contato. Verifique a conexão ou a query.');
         setLoading(false);
       });
   }, []);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    
-    // Captura os dados do formulário
-    const formElement = event.currentTarget;
-    const formData = new FormData(formElement);
-    
-    // Simula envio bem-sucedido
-    console.log('Dados do formulário:', Object.fromEntries(formData.entries()));
-    
-    // Atualiza o estado para mostrar mensagem de sucesso
-    setFormSubmitted(true);
-    
-    // Limpa o formulário após 3 segundos
-    setTimeout(() => {
-      formElement.reset();
-      setFormSubmitted(false);
-    }, 3000);
-  };
+  // Removido handleSubmit pois não estava sendo utilizado diretamente no formulário
 
   return (
     <div className="container mx-auto px-4 py-16 min-h-screen">
@@ -254,3 +231,5 @@ const ContatoPage: React.FC = () => {
  * - Busca dinâmica de informações de contato do Sanity
  */
 export default ContatoPage;
+
+

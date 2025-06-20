@@ -66,7 +66,7 @@ const EventosPage: React.FC = () => {
   };
   
   // Função para extrair o horário da data ISO
-  const formatTime = (dateString?: string): string => {
+  const formatTime = (dateString?: string, eventTitle?: string): string => {
     if (!dateString) return '';
     try {
       console.log('EventosPage: Formatando horário para string:', dateString);
@@ -75,12 +75,12 @@ const EventosPage: React.FC = () => {
       // Isso garante que os horários sejam exatamente os que o usuário espera ver
       
       // Verificar se é o evento de Jantar Romântico (identificado pelo título ou ID)
-      if (dateString.includes('2025-06-14')) {
+      if (eventTitle?.includes('Jantar Romântico')) {
         // Forçar horários específicos para este evento
-        if (dateString === evento?.dataHoraInicio) {
+        if (dateString.includes('T18:00:00')) { // Assumindo que a dataString para início tem T18:00:00
           console.log('EventosPage: Forçando horário de início para 18:00');
           return '18:00';
-        } else if (dateString === evento?.dataHoraFim) {
+        } else if (dateString.includes('T21:30:00')) { // Assumindo que a dataString para fim tem T21:30:00
           console.log('EventosPage: Forçando horário de término para 21:30');
           return '21:30';
         }
@@ -134,18 +134,18 @@ const EventosPage: React.FC = () => {
         console.log('EventosPage: Dados recebidos do Sanity:', data);
         // Log detalhado para cada evento
         if (data && data.length > 0) {
-          data.forEach((evento, index) => {
-            console.log(`EventosPage: Evento ${index + 1} - ID: ${evento._id}`);
-            console.log(`EventosPage: Evento ${index + 1} - Título: ${evento.titulo}`);
-            console.log(`EventosPage: Evento ${index + 1} - Data início: ${evento.dataHoraInicio}`);
-            console.log(`EventosPage: Evento ${index + 1} - Data fim: ${evento.dataHoraFim}`);
-            console.log(`EventosPage: Evento ${index + 1} - Imagem URL: ${evento.imagem_destaque}`);
+          data.forEach((eventoItem, index) => { // Renomeado 'evento' para 'eventoItem'
+            console.log(`EventosPage: Evento ${index + 1} - ID: ${eventoItem._id}`);
+            console.log(`EventosPage: Evento ${index + 1} - Título: ${eventoItem.titulo}`);
+            console.log(`EventosPage: Evento ${index + 1} - Data início: ${eventoItem.dataHoraInicio}`);
+            console.log(`EventosPage: Evento ${index + 1} - Data fim: ${eventoItem.dataHoraFim}`);
+            console.log(`EventosPage: Evento ${index + 1} - Imagem URL: ${eventoItem.imagem_destaque}`);
           });
         }
         setEventos(data || []); // Atualiza o estado com os dados (ou array vazio)
         setLoading(false); // Desativa o loading
       })
-      .catch((err) => {
+      .catch((err: any) => { // Adicionado tipagem 'any' para 'err'
         console.error('EventosPage: Erro ao buscar eventos:', err);
         setError('Falha ao carregar os dados dos eventos. Verifique a conexão ou a query.');
         setLoading(false); // Desativa o loading mesmo com erro
@@ -193,18 +193,18 @@ const EventosPage: React.FC = () => {
       {!loading && !error && eventos.length > 0 && (
         // Grid responsivo: 1 coluna em telas pequenas, 2 em médias, 3 em grandes
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {eventos.map((evento) => (
+          {eventos.map((eventoItem) => (
             // Card individual do evento
-            <article key={evento._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden flex flex-col" aria-labelledby={`evento-titulo-${evento._id}`}>
+            <article key={eventoItem._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden flex flex-col" aria-labelledby={`evento-titulo-${eventoItem._id}`}>
               {/* Imagem do Evento (ou Placeholder) */}
               <div className="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500 overflow-hidden">
-                {evento.imagem_destaque ? (
+                {eventoItem.imagem_destaque ? (
                   <img 
-                    src={evento.imagem_destaque} 
-                    alt={`Imagem do evento: ${evento.titulo || 'Evento sem título'}`} // Alt text descritivo
+                    src={eventoItem.imagem_destaque} 
+                    alt={`Imagem do evento: ${eventoItem.titulo || 'Evento sem título'}`} // Alt text descritivo
                     className="w-full h-full object-cover cursor-pointer transition-transform hover:scale-105" // Garante que a imagem cubra a área
                     loading="lazy" // Carregamento preguiçoso para imagens
-                    onClick={() => ampliarImagem(evento.imagem_destaque!)}
+                    onClick={() => ampliarImagem(eventoItem.imagem_destaque!)}
                   />
                  ) : (
                   // Placeholder se não houver imagem
@@ -215,39 +215,39 @@ const EventosPage: React.FC = () => {
               {/* Conteúdo do Card */}
               <div className="p-6 flex flex-col flex-grow">
                 {/* Título do Evento */}
-                <h2 id={`evento-titulo-${evento._id}`} className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{evento.titulo || 'Evento Sem Título'}</h2>
+                <h2 id={`evento-titulo-${eventoItem._id}`} className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{eventoItem.titulo || 'Evento Sem Título'}</h2>
                 {/* Data do Evento */}
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
                   <Calendar size={16} className="mr-2 flex-shrink-0" aria-hidden="true" />
-                  <time dateTime={evento.dataHoraInicio}>{formatDate(evento.dataHoraInicio)}</time> {/* Usa tag <time> */} 
+                  <time dateTime={eventoItem.dataHoraInicio}>{formatDate(eventoItem.dataHoraInicio)}</time> {/* Usa tag <time> */} 
                   <div className="ml-2 flex flex-col">
                     <span className="flex items-center">
                       <span className="font-medium">Início:</span> 
                       <span className="ml-1">
-                        {evento.titulo?.includes('Jantar Romântico') ? '18:00' : formatTime(evento.dataHoraInicio)}
+                        {eventoItem.titulo?.includes('Jantar Romântico') ? '18:00' : formatTime(eventoItem.dataHoraInicio, eventoItem.titulo)}
                       </span>
                     </span>
-                    {evento.dataHoraFim && (
+                    {eventoItem.dataHoraFim && (
                       <span className="flex items-center mt-1">
                         <span className="font-medium">Término:</span> 
                         <span className="ml-1">
-                          {evento.titulo?.includes('Jantar Romântico') ? '21:30' : formatTime(evento.dataHoraFim)}
+                          {eventoItem.titulo?.includes('Jantar Romântico') ? '21:30' : formatTime(eventoItem.dataHoraFim, eventoItem.titulo)}
                         </span>
                       </span>
                     )}
                   </div>
                 </div>
                 {/* Local do Evento (se houver) */}
-                {evento.local && (
+                {eventoItem.local && (
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-4">
                     <MapPin size={16} className="mr-2 flex-shrink-0" aria-hidden="true" />
-                    <span>{evento.local}</span>
+                    <span>{eventoItem.local}</span>
                   </div>
                 )}
                 {/* Descrição do Evento (usando PortableText) */}
                 <div className="text-gray-700 dark:text-gray-300 text-sm mb-4 flex-grow prose prose-sm dark:prose-invert max-w-none">
-                  {evento.descricao ? (
-                    <PortableText value={evento.descricao} />
+                  {eventoItem.descricao ? (
+                    <PortableText value={eventoItem.descricao} />
                   ) : (
                     <p>Descrição não disponível.</p>
                   )}
@@ -255,9 +255,9 @@ const EventosPage: React.FC = () => {
                 {/* TODO: Adicionar botão de "Saiba Mais" ou link se necessário */}
                 {/* Exemplo: */}
                 {/* <Link 
-                  to={`/eventos/${evento._id}`} // Ajustar rota se necessário
+                  to={`/eventos/${eventoItem._id}`} // Ajustar rota se necessário
                   className="mt-auto inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-center transition-colors self-start"
-                  aria-label={`Saiba mais sobre ${evento.titulo || 'este evento'}`}
+                  aria-label={`Saiba mais sobre ${eventoItem.titulo || 'este evento'}`}
                 >
                   Saiba Mais
                 </Link> */}
@@ -304,3 +304,5 @@ const EventosPage: React.FC = () => {
  * - Cards com imagem, título, data, local e descrição
  */
 export default EventosPage;
+
+

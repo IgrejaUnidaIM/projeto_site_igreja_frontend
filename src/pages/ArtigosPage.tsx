@@ -29,6 +29,7 @@ interface SermaoEscrito {
   titulo?: string;
   pregador?: string;
   data?: string; // Formato YYYY-MM-DD
+  resumo?: string; // Adicionado resumo para SermaoEscrito
   conteudo?: any[]; // Tipo Portable Text
   slug?: {
     current?: string;
@@ -95,7 +96,14 @@ const ArtigosPage: React.FC = () => {
   /**
    * Função auxiliar para formatar data (DD/MM/YYYY)
    */
-  const formatData = (dateString?: string) => {
+  const formatData = (item: ConteudoEscrito) => {
+    let dateString: string | undefined;
+    if (item.tipo === 'artigo') {
+      dateString = item.dataPublicacao;
+    } else if (item.tipo === 'sermao') {
+      dateString = item.data;
+    }
+
     if (!dateString) return '';
     try {
       const date = new Date(`${dateString}T12:00:00Z`);
@@ -238,7 +246,7 @@ const ArtigosPage: React.FC = () => {
                     {item.tipo === 'artigo' ? 'Artigo' : 'Sermão'}
                   </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {formatData(item.dataPublicacao || item.data)}
+                    {formatData(item)}
                   </span>
                 </div>
                 
@@ -254,10 +262,16 @@ const ArtigosPage: React.FC = () => {
                 </h2>
                 
                 {/* Autor/Pregador */}
-                {item.autor && (
+                {item.tipo === 'artigo' && item.autor && (
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-3">
                     <User size={16} className="mr-1" />
                     <span>{item.autor}</span>
+                  </div>
+                )}
+                {item.tipo === 'sermao' && item.pregador && (
+                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-3">
+                    <User size={16} className="mr-1" />
+                    <span>{item.pregador}</span>
                   </div>
                 )}
               </div>
@@ -311,3 +325,5 @@ const ArtigosPage: React.FC = () => {
 };
 
 export default ArtigosPage;
+
+
