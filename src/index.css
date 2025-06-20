@@ -241,7 +241,7 @@ footer .contact-info p {
   }
   
   .mobile-nav-link {
-    @apply block py-3 px-4 text-white dark:text-white hover:bg-blue-50 dark:hover:bg-slate-800 rounded transition-colors text-center text-base font-medium;
+    @apply block py-3 px-4 text-gray-800 dark:text-white hover:bg-blue-50 dark:hover:bg-slate-800 rounded transition-colors text-center text-base font-medium;
   }
   
   .btn-primary {
