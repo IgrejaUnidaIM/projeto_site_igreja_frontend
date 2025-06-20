@@ -237,11 +237,11 @@ footer .contact-info p {
 /* Estilos para links de navegação */
 @layer components {
   .nav-link {
-    @apply text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors px-3 py-2 rounded-md text-sm;
+    @apply text-white dark:text-white hover:text-blue-200 dark:hover:text-blue-200 font-medium transition-colors px-3 py-2 rounded-md text-sm;
   }
   
   .mobile-nav-link {
-    @apply block py-3 px-4 text-gray-800 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-slate-800 rounded transition-colors text-center text-base font-medium;
+    @apply block py-3 px-4 text-white dark:text-white hover:bg-blue-50 dark:hover:bg-slate-800 rounded transition-colors text-center text-base font-medium;
   }
   
   .btn-primary {

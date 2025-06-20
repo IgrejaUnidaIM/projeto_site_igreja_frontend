@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Sun, Moon, Menu, X } from 'lucide-react';
@@ -114,7 +113,7 @@ const Header = () => {
             </div>
             <div className="ml-2 md:ml-3 min-w-0"> {/* Reduzido margin no mobile e adicionado min-w-0 */}
               {/* Ajusta cor do texto para melhor contraste em modo escuro */}
-              <h1 className="text-sm md:text-xl font-bold text-blue-800 dark:text-blue-300 break-words"> {/* Removido truncate, adicionado break-words */}
+              <h1 className="text-sm md:text-xl font-bold text-white dark:text-white break-words"> {/* Removido truncate, adicionado break-words */}
                 <span className="inline md:inline">1ª Igreja Unida</span> <span className="inline md:inline">em Inácio Monteiro</span>
               </h1>
             </div>
