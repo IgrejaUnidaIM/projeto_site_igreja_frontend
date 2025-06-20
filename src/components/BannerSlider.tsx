@@ -6,10 +6,10 @@ import { Link } from 'react-router-dom';
 import { Loader, AlertCircle, Image as ImageIcon } from 'lucide-react';
 
 // Import Swiper styles
-import 'swiper/modules';
-import 'swiper/modules/navigation.css';
-import 'swiper/modules/pagination.css';
-import 'swiper/modules/autoplay.css';
+import 'swiper/css'; // Importa o CSS base do Swiper
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/autoplay';
 
 /**
  * Interface para os dados de banners buscados do Sanity
@@ -53,7 +53,7 @@ const BannerSlider: React.FC = () => {
         setBanners(data || []);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch((err: any) => { // Adicionado tipagem 'any' para 'err'
         console.error('BannerSlider: Erro ao buscar banners:', err);
         setError('Falha ao carregar os banners.');
         setLoading(false);
@@ -147,4 +147,5 @@ const BannerSlider: React.FC = () => {
 };
 
 export default BannerSlider;
+
 
