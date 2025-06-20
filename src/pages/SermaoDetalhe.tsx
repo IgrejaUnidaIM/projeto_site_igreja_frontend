@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import sanityClient from '../sanityClient.js';
 import { PortableText } from '@portabletext/react';
-import { ArrowLeft, Calendar, User, Loader, AlertCircle, BookText } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Loader, AlertCircle } from 'lucide-react';
 
 interface SermaoDetalhes {
   _id: string;
